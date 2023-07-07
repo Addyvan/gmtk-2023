@@ -46,12 +46,21 @@ class PhysicsWorld {
       );
 
       if (collided) {
-        if (collider.mesh.userData.endPlatform){
-          // do something
-        }
+
         collisionResponse(this.particles, 0, normal, penetration, 0.0)
+
+        if (collider.mesh.userData.tiltPopZ){
+          if (this.player.position.z - collider.mesh.position.z < 0){
+            this.particles._addVelocity(0,0,5,0); 
+          }
+        }
+
+        if (collider.mesh.userData.endPlatform){
+          //console.log('level complete!')
+        }
       }
     }
+
 
     // TODO: Come up with a proper system for mapping physics changes to the objects
     this.player.updatePos();

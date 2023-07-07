@@ -46,7 +46,6 @@ class DeviceOrientationHandler {
 
   initDeviceOrientationListener() {
     if (checkSupportFor("Device Orientation", "ondeviceorientation")) {
-      console.log("add deviceorientation handler");
       window.addEventListener(
         "deviceorientation",
         (evt) => this.handleDeviceOrientation(evt)

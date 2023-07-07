@@ -12,7 +12,8 @@ class Collider {
     const handlePhoneMove = (evt: CustomEvent) => {
       const { alphaRad, betaRad, gammaRad } = evt.detail;
       if (this.mesh.userData.movable) {
-        this.mesh.rotation.set(betaRad, alphaRad, -gammaRad);
+        this.mesh.rotation.set(betaRad, 0, -gammaRad);
+        this.mesh.userData.tiltPopZ = betaRad * 180/Math.PI > 15 ? true: false; 
       }
     };
     window.addEventListener("phonemove", handlePhoneMove);
