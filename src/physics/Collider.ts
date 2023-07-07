@@ -11,7 +11,7 @@ class Collider {
     // TODO: CHANGE ASAP (ADDY)
     const handlePhoneMove = (evt: CustomEvent) => {
       const { alphaRad, betaRad, gammaRad } = evt.detail;
-      this.mesh.rotation.set(betaRad, -gammaRad, alphaRad);
+      this.mesh.rotation.set(betaRad, alphaRad, -gammaRad);
     };
     window.addEventListener("phonemove", handlePhoneMove);
   }

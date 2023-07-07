@@ -1,6 +1,7 @@
 import * as THREE from "three";
 import PhysicsWorld from "./physics/PhysicsWorld";
 import { Level } from "./utils/loadLevel";
+import CameraController from "./CameraController";
 
 class AppState {
   renderer: THREE.WebGLRenderer;
@@ -12,6 +13,7 @@ class AppState {
 
   clock: THREE.Clock;
   physicsClock: THREE.Clock;
+  cameraController: CameraController;
 
   constructor() {
     // THREE.js init
@@ -22,7 +24,7 @@ class AppState {
       0.1,
       1000
     );
-    this.camera.position.z = 5;
+    this.cameraController = new CameraController(this.camera);
 
     this.renderer = new THREE.WebGLRenderer({
       //@ts-ignore
@@ -49,12 +51,12 @@ class AppState {
     // clear the scene
     this.scene.remove.apply(this.scene, this.scene.children);
 
-    this.scene.add(level.ballMesh)
+    this.scene.add(level.playerMesh);
     for (let colliderMesh of level.colliderMeshes) {
       this.scene.add(colliderMesh);
     }
 
-    this.physics = new PhysicsWorld(level.ballMesh, level.colliderMeshes);
+    this.physics = new PhysicsWorld(level.playerMesh, level.colliderMeshes);
   }
 
   render() {

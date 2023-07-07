@@ -1,11 +1,9 @@
 import * as THREE from "three";
 import { GLTFLoader, GLTF } from "three-stdlib";
-import Ball from "../physics/Ball";
-import Collider from "../physics/Collider";
 
 export type Level = {
   name: string;
-  ballMesh: THREE.Mesh<THREE.SphereGeometry>;
+  playerMesh: THREE.Mesh<THREE.SphereGeometry>;
   colliderMeshes: Array<THREE.Mesh<THREE.BoxGeometry>>;
 };
 
@@ -16,19 +14,19 @@ function loadLevel(name: string): Promise<Level> {
     const onLoad = (gltf: GLTF) => {
       console.log("gltf", gltf);
 
-      let ball: THREE.Mesh<THREE.SphereGeometry>;
+      let player: THREE.Mesh<THREE.SphereGeometry>;
       let colliders: Array<THREE.Mesh<THREE.BoxGeometry>> = [];
 
       gltf.scene.traverse((obj: any) => {
         if (obj.userData.ball) {
-          if (ball !== undefined) {
+          if (player !== undefined) {
             reject("Can only have one ball on a level!");
           }
-          ball = new THREE.Mesh(
+          player = new THREE.Mesh(
             bufferToSphereGeo(obj.geometry, obj.scale),
             new THREE.MeshBasicMaterial({ color: 0xffffff })
           );
-          ball.position.set(obj.position.x, obj.position.y, obj.position.z);
+          player.position.set(obj.position.x, obj.position.y, obj.position.z);
         }
 
         if (obj.userData.collider) {
@@ -48,7 +46,7 @@ function loadLevel(name: string): Promise<Level> {
 
       resolve({
         name: name,
-        ballMesh: ball,
+        playerMesh: player,
         colliderMeshes: colliders,
       });
     };
