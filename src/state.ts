@@ -30,6 +30,7 @@ class AppState {
       //@ts-ignore
       canvas: document.getElementById("canvas"),
     });
+    this.renderer.outputEncoding = THREE.sRGBEncoding;
     this.renderer.setSize(window.innerWidth, window.innerHeight);
 
     const onWindowResize = () => {
