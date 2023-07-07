@@ -46,6 +46,9 @@ class PhysicsWorld {
       );
 
       if (collided) {
+        if (collider.mesh.userData.endPlatform){
+          // do something
+        }
         collisionResponse(this.particles, 0, normal, penetration, 0.0)
       }
     }
