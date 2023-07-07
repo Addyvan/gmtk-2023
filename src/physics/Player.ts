@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import { Particles, pSize } from "ptcl";
 
-class Ball {
+class Player {
   particles: Particles;
   mesh: THREE.Mesh<THREE.SphereGeometry>;
 
@@ -27,4 +27,4 @@ class Ball {
   }
 }
 
-export default Ball;
+export default Player;

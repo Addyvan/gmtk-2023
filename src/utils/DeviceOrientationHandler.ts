@@ -49,7 +49,7 @@ class DeviceOrientationHandler {
       console.log("add deviceorientation handler");
       window.addEventListener(
         "deviceorientation",
-        this.handleDeviceOrientation
+        (evt) => this.handleDeviceOrientation(evt)
       );
     }
   }
