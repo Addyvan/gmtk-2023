@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import { Particles, ParticleRef } from "ptcl";
-import Ball from "./Ball";
+import Player from "./Player";
 import Collider from "./Collider";
 
 function argmin(vec: Array<number>) {
@@ -10,8 +10,8 @@ function argmin(vec: Array<number>) {
     .map((a) => a[1])[0];
 }
 
-export function collisionDetection(ball: Ball, collider: Collider) {
-  let relCenter = ball.position.addScaledVector(collider.position, -1);
+export function collisionDetection(player: Player, collider: Collider) {
+  let relCenter = player.position.addScaledVector(collider.position, -1);
   const quaternion = new THREE.Quaternion(
     -collider.quaternion.x,
     -collider.quaternion.y,
@@ -25,9 +25,9 @@ export function collisionDetection(ball: Ball, collider: Collider) {
   let normal = new THREE.Vector3();
 
   if (
-    Math.abs(relCenter.x) <= ball.radius + collider.width / 2 &&
-    Math.abs(relCenter.y) <= ball.radius + collider.height / 2 &&
-    Math.abs(relCenter.z) <= ball.radius + collider.depth / 2
+    Math.abs(relCenter.x) <= player.radius + collider.width / 2 &&
+    Math.abs(relCenter.y) <= player.radius + collider.height / 2 &&
+    Math.abs(relCenter.z) <= player.radius + collider.depth / 2
   ) {
     const vec = [
       Math.abs(collider.width / 2 - relCenter.x),
@@ -52,9 +52,9 @@ export function collisionDetection(ball: Ball, collider: Collider) {
         Math.abs(relCenter.y) <= collider.height / 2 &&
         Math.abs(relCenter.z) <= collider.depth / 2
       ) {
-        penetration = ball.radius + vec[idx];
+        penetration = player.radius + vec[idx];
       } else {
-        penetration = ball.radius - vec[idx];
+        penetration = player.radius - vec[idx];
       }
     }
   }

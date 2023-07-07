@@ -1,17 +1,18 @@
 import {Particles} from "ptcl";
-import Ball from "./Ball";
+import Player from "./Player";
 import Collider from "./Collider";
 import {collisionDetection, collisionResponse} from "./core";
+import state from "../state";
 
 class PhysicsWorld {
 
   maxParticles: number;
   particles: Particles;
 
-  ball : Ball;
+  player : Player;
   colliders : Array<Collider>;
 
-  constructor(ballMesh: THREE.Mesh<THREE.SphereGeometry>, colliderMeshArr: Array<THREE.Mesh<THREE.BoxGeometry>>, maxParticles: number = 1) {
+  constructor(playerMesh: THREE.Mesh<THREE.SphereGeometry>, colliderMeshArr: Array<THREE.Mesh<THREE.BoxGeometry>>, maxParticles: number = 1) {
     this.maxParticles = maxParticles;
     this.particles = new Particles(this.maxParticles);
     // TODO come up with a proper way of initializing a level's particle
@@ -26,7 +27,8 @@ class PhysicsWorld {
       );
     }
 
-    this.ball = new Ball(this.particles, ballMesh);
+    this.player = new Player(this.particles, playerMesh);
+    state.cameraController.setPlayer(this.player);
     this.colliders = colliderMeshArr.map((colliderMesh) => {
       return(new Collider(colliderMesh));
     })
@@ -39,7 +41,7 @@ class PhysicsWorld {
 
     for (let collider of this.colliders) {
       let {collided, normal, penetration} = collisionDetection(
-        this.ball,
+        this.player,
         collider
       );
 
@@ -52,7 +54,7 @@ class PhysicsWorld {
     }
 
     // TODO: Come up with a proper system for mapping physics changes to the objects
-    this.ball.updatePos();
+    this.player.updatePos();
   
     this.particles.integrate(dt);
   }

@@ -11,6 +11,8 @@ function update() {
 
   dt = state.clock.getDelta();
 
+  state.cameraController.update(dt);
+
   state.render();
 }
 
