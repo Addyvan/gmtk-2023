@@ -7,12 +7,25 @@ class Collider {
 
   constructor(mesh: THREE.Mesh<THREE.BoxGeometry>) {
     this.mesh = mesh;
+  
 
     // TODO: CHANGE ASAP (ADDY)
 
+    let init = true;
+    let [alpha0, beta0, gamma0] = [0,0,0];
+
     const handleDeviceOrientation = (event) => {
       // Get the rotation values from the event
-      const { alpha, beta, gamma } = event;
+      let { alpha, beta, gamma } = event;
+
+      if (init){
+        [alpha0,beta0,gamma0] = [alpha,beta,gamma];
+        init = false;
+      } 
+
+      alpha -= alpha0;
+      beta -= beta0;
+      gamma -= gamma0;
     
       // Convert degrees to radians
       const alphaRad = THREE.MathUtils.degToRad(alpha);
