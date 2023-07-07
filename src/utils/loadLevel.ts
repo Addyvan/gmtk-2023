@@ -24,13 +24,25 @@ function loadLevel(name: string): Promise<Level> {
           if (ball !== undefined) {
             reject("Can only have one ball on a level!");
           }
-          ball = new THREE.Mesh(bufferToSphereGeo(obj.geometry, obj.scale), new THREE.MeshBasicMaterial({color: 0xffffff})); //obj.material
+          ball = new THREE.Mesh(
+            bufferToSphereGeo(obj.geometry, obj.scale),
+            new THREE.MeshBasicMaterial({ color: 0xffffff })
+          );
+          ball.position.set(obj.position.x, obj.position.y, obj.position.z);
         }
 
         if (obj.userData.collider) {
-          colliders.push(
-            new THREE.Mesh(bufferToBoxGeo(obj.geometry, obj.scale), new THREE.MeshBasicMaterial({color: 0xff0000, wireframe: true})) // obj.material
+          let colliderMesh = new THREE.Mesh(
+            bufferToBoxGeo(obj.geometry, obj.scale),
+            new THREE.MeshBasicMaterial({ color: 0xff0000, wireframe: true })
           );
+          colliderMesh.position.set(
+            obj.position.x,
+            obj.position.y,
+            obj.position.z
+          );
+          colliderMesh.rotation.setFromQuaternion(obj.quaternion);
+          colliders.push(colliderMesh);
         }
       });
 
@@ -51,7 +63,10 @@ function loadLevel(name: string): Promise<Level> {
   });
 }
 
-function bufferToBoxGeo(bufferGeometry: THREE.BufferGeometry, scale : THREE.Vector3) {
+function bufferToBoxGeo(
+  bufferGeometry: THREE.BufferGeometry,
+  scale: THREE.Vector3
+) {
   const positionAttribute = bufferGeometry.getAttribute("position");
 
   // Get the array buffer containing the position data
@@ -88,7 +103,10 @@ function bufferToBoxGeo(bufferGeometry: THREE.BufferGeometry, scale : THREE.Vect
   return new THREE.BoxGeometry(width, height, depth);
 }
 
-function bufferToSphereGeo(bufferGeometry: THREE.BufferGeometry, scale : THREE.Vector3) {
+function bufferToSphereGeo(
+  bufferGeometry: THREE.BufferGeometry,
+  scale: THREE.Vector3
+) {
   // Extract the position attribute from the buffer geometry
   const positionAttribute = bufferGeometry.getAttribute("position");
 

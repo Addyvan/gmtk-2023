@@ -1,19 +1,35 @@
+import * as THREE from "three";
 import loadLevel, { Level } from "./utils/loadLevel";
 import { update, fixedUpdate } from "./update";
 import state from "./state";
+import DeviceOrientationHandler from "./utils/DeviceOrientationHandler";
 
-loadLevel("test").then((level: Level) => {
-  console.log(level);
+const deviceOrientationHandler = new DeviceOrientationHandler();
 
-  state.setLevel(level);
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
 
-  function start() {
-    setInterval(() => {
-      fixedUpdate();
-    }, 1000 / 30);
-    update();
+async function start() {
+  while (true) {
+    if (deviceOrientationHandler.calibrated) {
+      break;
+    }
+    await sleep(100);
   }
-  
-  start();
-});
+  loadLevel("test").then((level: Level) => {
+    console.log(level);
 
+    state.setLevel(level);
+
+    function start() {
+      setInterval(() => {
+        fixedUpdate();
+      }, 1000 / 30);
+      update();
+    }
+
+    start();
+  });
+}
+start();
