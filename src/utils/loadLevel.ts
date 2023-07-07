@@ -42,6 +42,7 @@ function loadLevel(name: string): Promise<Level> {
           colliderMesh.rotation.setFromQuaternion(obj.quaternion);
 
           colliderMesh.userData.movable = obj.userData.movable;
+          colliderMesh.userData.endPlatform = obj.userData.endPlatform;
 
           if (obj.userData.endPlatform) {
             colliderMesh.material.color = new THREE.Color(0x03c04a);
