@@ -20,8 +20,7 @@ const onBuild = (error, result) => {
   console.clear();
 
   console.log(`Listening at http://localhost:${process.env.PORT || 3000} 🚀!`);
-
-  fs.copySync(`./public/index.html`, `./dist/index.html`);
+  fs.copySync(`./public/`, `./dist/`);
 };
 
 async function build() {
@@ -74,10 +73,6 @@ async function build() {
   });
 
   app.use(express.static("dist"));
-
-  app.get("*", (_, res) => {
-    res.sendFile(path.join(__dirname, "../dist", "index.html"));
-  });
 
   const port = process.env.PORT || 3000;
 

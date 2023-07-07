@@ -1,86 +1,49 @@
 import fs from "fs-extra";
-import esbuild from "esbuild";
-import { Generator } from "@jspm/generator";
+import esbuild from 'esbuild';
+import svgrPlugin from 'esbuild-plugin-svgr';
+import * as path from "path";
+import {fileURLToPath} from 'url';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 
 async function build() {
-  await esbuild.build({
-    entryPoints: ["./src/index.ts"],
-    outdir: "./dist",
-    bundle: true,
-    minify: false,
-    platform: "node",
-    format: "esm",
-    sourcemap: false,
-    loader: {
-      ".png": "dataurl",
-      ".jpg": "dataurl",
-      ".gif": "dataurl",
-      ".json": "text",
-      ".glsl": "text",
-      ".frag": "text",
-      ".vert": "text",
-      ".fbx": "dataurl",
-      ".glb": "dataurl",
-      ".gltf": "dataurl",
-      ".wav": "dataurl",
-      ".mp3": "dataurl",
-    },
-    external: ["three", "three-stdlib", "ptcl"],
-  });
+    fs.copySync(`./public/final.html`, `./dist/final/index.html`);
+    await esbuild.build({
+        entryPoints: ['src/index.ts'],
+        outdir: 'dist/final',
+        bundle: true,
+        minify: true,
+        treeShaking: false,
+        sourcemap: false,
+        loader: { 
+            '.png': 'text',
+            '.gif': 'text',
+            '.tmLanguage': 'text',
+            '.ttf': 'text',
+            '.json': 'text',
+            '.fbx': 'dataurl',
+            '.wav': "dataurl",
+            ".mp3": "dataurl",
+        },
+        external: ['require', 'fs', "crypto", "assert", "url"],
+        plugins: [
+            svgrPlugin()
+        ],
+    }).then((result) => {
+        let jsSrc = fs.readFileSync(path.join(__dirname, `../dist/final/index.js`)).toString();
+        let css = fs.readFileSync(path.join(__dirname, `../dist/final/index.css`)).toString();
+        let indexHTML = fs.readFileSync(path.join(__dirname, `../dist/final/index.html`)).toString();
+        
+        indexHTML = indexHTML.replace("/* CODE */", jsSrc);
+        indexHTML = indexHTML.replace("/* STYLESHEET */", css); 
 
-  const packageJSON = JSON.parse(fs.readFileSync(`./package.json`).toString());
+        fs.writeFileSync(path.join(__dirname, `../dist/bundle.html`), indexHTML);
 
-  // console.log(packageJSON);
+    });
 
-  const generator = new Generator({
-    mapUrl: import.meta.url,
-    env: ["browser", "development", "module"],
-  });
-
-  // loop through dependencies and create a CDN import map
-  // this makes it so that our demos require as few characters as possible
-  await Promise.all(
-    Object.keys(packageJSON.dependencies).map(async (key) => {
-      await generator.install(`${key}@${packageJSON.dependencies[key]}`);
-    })
-  );
-
-  const importMap = await generator.getMap();
-
-  fs.copySync(`./public/index.html`, `./dist/index.html`);
-  let htmlTemplate = fs.readFileSync(`./dist/index.html`).toString();
-
-  // remove the current css and js and replace with inline
-  htmlTemplate = htmlTemplate.replace(
-    `<link rel="stylesheet" href="/index.css">`,
-    ""
-  );
-
-  htmlTemplate = htmlTemplate.replace(
-    `<script src="/index.js"></script>`,
-    `
-  <style>
-  ${fs.readFileSync(`./dist/index.css`).toString()}
-  </style>
-  
-  <script type="importmap">
-  ${JSON.stringify(importMap, null, "\t")}
-  </script>
-  
-  <!-- ES Module Shims: Import maps polyfill for modules browsers without import maps support (all except Chrome 89+) -->
-  <script async src="https://ga.jspm.io/npm:es-module-shims@1.5.1/dist/es-module-shims.js" crossorigin="anonymous"></script>
-
-  <script type="module">
-  ${fs.readFileSync(`./dist/index.js`).toString()}
-  </script>
-
-
-
-  `
-  );
-  fs.writeFileSync(`./dist/index.html`, htmlTemplate);
 }
 
 build().catch((err) => {
-  console.error(err);
-});
+    console.error(err);
+})

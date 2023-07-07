@@ -11,8 +11,7 @@
   },
   "license": "ISC",
   "dependencies": {
-    "@jspm/generator": "^1.0.0-beta.38",
-    "ptcl": "file:../..",
+    "ptcl": "^0.0.9",
     "three": "0.145.0",
     "three-stdlib": "2.17.3"
   },
@@ -20,6 +19,7 @@
     "@types/three": "0.144.0",
     "cors": "2.8.5",
     "esbuild": "0.14.48",
+    "esbuild-plugin-svgr": "^2.0.0",
     "express": "4.18.1",
     "fs-extra": "10.1.0",
     "open": "8.4.0",
