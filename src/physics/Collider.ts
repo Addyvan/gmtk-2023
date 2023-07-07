@@ -20,7 +20,7 @@ class Collider {
       const gammaRad = THREE.MathUtils.degToRad(gamma);
     
       // Set the cube rotation based on the device orientation
-      this.mesh.rotation.set(betaRad, alphaRad, -gammaRad);
+      this.mesh.rotation.set(betaRad, -gammaRad, alphaRad);
     }
     
     
