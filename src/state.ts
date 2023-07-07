@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import PhysicsWorld from "./physics/PhysicsWorld";
+import { Level } from "./utils/loadLevel";
 
 class AppState {
   renderer: THREE.WebGLRenderer;
@@ -35,23 +36,19 @@ class AppState {
 
     window.addEventListener("resize", onWindowResize, false);
 
-    // Gameplay objects init
+  }
 
-    let geometry = new THREE.SphereGeometry(0.05);
-    let material = new THREE.MeshBasicMaterial({ color: 0xffff00 });
-    this.ballMesh = new THREE.Mesh(geometry, material);
+  setLevel(level : Level) {
+    
+    // clear the scene
+    this.scene.remove.apply(this.scene, this.scene.children);
 
-    const colliderGeometry = new THREE.BoxGeometry(2, 1, 2, 3, 1, 3);
-    const colliderMaterial = new THREE.MeshBasicMaterial({
-      wireframe: true,
-      color: "red",
-    });
-    const colliderMesh = new THREE.Mesh(colliderGeometry, colliderMaterial);
-    colliderMesh.position.set(0, -1, 0);
+    this.scene.add(level.ballMesh)
+    for (let colliderMesh of level.colliderMeshes) {
+      this.scene.add(colliderMesh);
+    }
 
-    this.physics = new PhysicsWorld(this.ballMesh, [colliderMesh]);
-    this.scene.add(this.ballMesh);
-    this.scene.add(colliderMesh);
+    this.physics = new PhysicsWorld(level.ballMesh, level.colliderMeshes);
   }
 
   render() {
