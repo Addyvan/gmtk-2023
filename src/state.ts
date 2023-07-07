@@ -10,6 +10,9 @@ class AppState {
   ballMesh: THREE.Mesh<THREE.SphereGeometry>;
   physics: PhysicsWorld;
 
+  clock: THREE.Clock;
+  physicsClock: THREE.Clock;
+
   constructor() {
     // THREE.js init
     this.scene = new THREE.Scene();
@@ -35,6 +38,9 @@ class AppState {
     };
 
     window.addEventListener("resize", onWindowResize, false);
+
+    this.clock = new THREE.Clock();
+    this.physicsClock = new THREE.Clock();
 
   }
 

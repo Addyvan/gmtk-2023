@@ -1,8 +1,7 @@
 import * as THREE from "three";
 import state from "./state";
 
-const clock = new THREE.Clock();
-let dt: number = clock.getDelta();
+let dt: number = state.clock.getDelta();
 
 /**
  * The main update loop
@@ -10,18 +9,17 @@ let dt: number = clock.getDelta();
 function update() {
   requestAnimationFrame(update);
 
-  dt = clock.getDelta();
+  dt = state.clock.getDelta();
 
   state.render();
 }
 
-const physicsClock = new THREE.Clock();
-let physicsDt = physicsClock.getDelta();
+let physicsDt = state.physicsClock.getDelta();
 /**
  * The physic update loop
  */
 function fixedUpdate() {
-  physicsDt = physicsClock.getDelta();
+  physicsDt = state.physicsClock.getDelta();
   state.physics.update(physicsDt);
 }
 

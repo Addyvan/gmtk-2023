@@ -18,7 +18,6 @@ async function start() {
     await sleep(100);
   }
   loadLevel("test").then((level: Level) => {
-    console.log(level);
 
     state.setLevel(level);
 
@@ -29,6 +28,8 @@ async function start() {
       update();
     }
 
+    state.clock.getDelta();
+    state.physicsClock.getDelta();
     start();
   });
 }
