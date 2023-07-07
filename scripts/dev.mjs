@@ -57,6 +57,18 @@ async function build() {
     })
     .then((result) => onBuild(null, result));
 
+  // Directory path you want to monitor
+  const directoryPath = path.join(__dirname, "../public/assets");
+
+  // Method 1: Using fs.watch()
+  fs.watch(directoryPath, (eventType, filename) => {
+    if (eventType === "change") {
+      console.log(`File ${filename} changed`);
+      // Perform actions when a file in the directory changes
+      fs.copySync(`./public/assets/`, `./dist/assets/`);
+    }
+  });
+
   const app = express();
 
   const options = {
