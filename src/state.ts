@@ -22,7 +22,7 @@ class AppState {
       0.1,
       1000
     );
-    this.camera.position.z = 5;
+    this.camera.position.z = 7;
 
     this.renderer = new THREE.WebGLRenderer({
       //@ts-ignore

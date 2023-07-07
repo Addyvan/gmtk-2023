@@ -42,6 +42,13 @@ function loadLevel(name: string): Promise<Level> {
             obj.position.z
           );
           colliderMesh.rotation.setFromQuaternion(obj.quaternion);
+
+          colliderMesh.userData.movable = obj.userData.movable;
+
+          if (obj.userData.endPlatform) {
+            colliderMesh.material.color = new THREE.Color(0x03c04a);
+          }
+          
           colliders.push(colliderMesh);
         }
       });
