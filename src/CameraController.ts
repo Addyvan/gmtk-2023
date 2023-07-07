@@ -20,7 +20,7 @@ class CameraController {
     this.desiredPosition = new THREE.Vector3();
 
     this.camera = camera;
-    this.camera.position.set(0, 5, 1);
+    this.camera.position.set(0, 4, 0);
     this.camera.lookAt(0, 0, 0);
     // this.camera.rotation.set(0, -Math.PI, 0);
     this.player = null;
@@ -38,8 +38,8 @@ class CameraController {
 
     this.desiredPosition.set(
       this.player.position.x,
-      this.player.position.y + 5,
-      this.player.position.z + 1
+      this.player.position.y + 4,
+      this.player.position.z + 0
     );
 
     this.currentPosition.lerp(this.desiredPosition, dt);

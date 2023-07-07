@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import "./index.css";
 import loadLevel, { Level } from "./utils/loadLevel";
 import { update, fixedUpdate } from "./update";
 import state from "./state";
@@ -18,7 +19,6 @@ async function start() {
     await sleep(100);
   }
   loadLevel("test").then((level: Level) => {
-
     state.setLevel(level);
 
     function start() {
