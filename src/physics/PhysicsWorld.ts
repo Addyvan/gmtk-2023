@@ -39,6 +39,7 @@ class PhysicsWorld {
     // hacky might need to change?
     this.particles._addForce(0, 0, -10, 0);
 
+    this.player.isFlying = true;
     for (let collider of this.colliders) {
       let {collided, normal, penetration} = collisionDetection(
         this.player,
@@ -46,6 +47,7 @@ class PhysicsWorld {
       );
 
       if (collided) {
+        this.player.isFlying = false;
 
         collisionResponse(this.particles, 0, normal, penetration, 0.0)
 
