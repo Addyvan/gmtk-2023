@@ -1,9 +1,11 @@
 import * as THREE from "three";
 import state from "../state";
+import bufferToBoxGeo from "../utils/bufferToBoxGeo";
 
 class Collider {
   mesh: THREE.Mesh<THREE.BoxGeometry>;
-  geometry: THREE.BoxGeometry;
+  geometry: THREE.BufferGeometry;
+  boxGeometry: THREE.BoxGeometry;
 
   deltaBetaRad: number;
 
@@ -14,6 +16,7 @@ class Collider {
   constructor(mesh: THREE.Mesh<THREE.BoxGeometry>) {
     this.mesh = mesh;
     this.originalOrientation = this.mesh.quaternion.clone();
+    this.boxGeometry = bufferToBoxGeo(mesh.geometry, mesh.scale);
     if (this.mesh.userData.endPlatform) {
       //@ts-ignore
       this.mesh.material.color = new THREE.Color(0x0000ff);
@@ -33,15 +36,15 @@ class Collider {
   }
 
   get width() {
-    return this.mesh.geometry.parameters.width;
+    return this.boxGeometry.parameters.width;
   }
 
   get height() {
-    return this.mesh.geometry.parameters.height;
+    return this.boxGeometry.parameters.height;
   }
 
   get depth() {
-    return this.mesh.geometry.parameters.depth;
+    return this.boxGeometry.parameters.depth;
   }
 
   isActive() {
@@ -66,5 +69,6 @@ class Collider {
     }
   }
 }
+
 
 export default Collider;

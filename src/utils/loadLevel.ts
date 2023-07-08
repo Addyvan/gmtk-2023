@@ -23,32 +23,17 @@ function loadLevel(name: string): Promise<Level> {
             reject("Can only have one ball on a level!");
           }
           player = new THREE.Mesh(
-            bufferToSphereGeo(obj.geometry, obj.scale),
+            bufferToSphereGeo(
+              obj.geometry,
+              obj.scale.add(new THREE.Vector3(0.2, 0.2, 0.2))
+            ),
             new THREE.MeshBasicMaterial({ color: 0xffffff })
           );
           player.position.set(obj.position.x, obj.position.y, obj.position.z);
         }
 
         if (obj.userData.collider) {
-          let colliderMesh = new THREE.Mesh(
-            bufferToBoxGeo(obj.geometry, obj.scale),
-            new THREE.MeshBasicMaterial({ color: 0xff0000, wireframe: true })
-          );
-          colliderMesh.position.set(
-            obj.position.x,
-            obj.position.y,
-            obj.position.z
-          );
-          colliderMesh.rotation.setFromQuaternion(obj.quaternion);
-
-          colliderMesh.userData.movable = obj.userData.movable;
-          colliderMesh.userData.endPlatform = obj.userData.endPlatform;
-
-          if (obj.userData.endPlatform) {
-            colliderMesh.material.color = new THREE.Color(0x03c04a);
-          }
-          
-          colliders.push(colliderMesh);
+          colliders.push(obj);
         }
       });
 
@@ -67,46 +52,6 @@ function loadLevel(name: string): Promise<Level> {
     };
     loader.load(`/assets/${name}.glb`, onLoad, onProgress, onError);
   });
-}
-
-function bufferToBoxGeo(
-  bufferGeometry: THREE.BufferGeometry,
-  scale: THREE.Vector3
-) {
-  const positionAttribute = bufferGeometry.getAttribute("position");
-
-  // Get the array buffer containing the position data
-  const positionArray = positionAttribute.array;
-
-  // Calculate the minimum and maximum coordinates
-  let minX = Infinity,
-    minY = Infinity,
-    minZ = Infinity;
-  let maxX = -Infinity,
-    maxY = -Infinity,
-    maxZ = -Infinity;
-
-  for (let i = 0; i < positionArray.length; i += 3) {
-    const x = positionArray[i] * scale.x;
-    const y = positionArray[i + 1] * scale.y;
-    const z = positionArray[i + 2] * scale.z;
-
-    minX = Math.min(minX, x);
-    minY = Math.min(minY, y);
-    minZ = Math.min(minZ, z);
-
-    maxX = Math.max(maxX, x);
-    maxY = Math.max(maxY, y);
-    maxZ = Math.max(maxZ, z);
-  }
-
-  // Calculate the dimensions of the box
-  const width = maxX - minX;
-  const height = maxY - minY;
-  const depth = maxZ - minZ;
-
-  // Create the new BoxGeometry
-  return new THREE.BoxGeometry(width, height, depth);
 }
 
 function bufferToSphereGeo(

@@ -60,7 +60,7 @@ class PhysicsWorld {
       if (collider.mesh.userData.endPlatform) {
         //console.log('level complete!')
       } else {
-        collider.setDebugColor(collided);
+        // collider.setDebugColor(collided);
       }
 
       if (this.player.isFlying) {

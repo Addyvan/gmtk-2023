@@ -62,6 +62,7 @@ class AppState {
   setLevel(level: Level) {
     // clear the scene
     this.scene.remove.apply(this.scene, this.scene.children);
+    this.scene.add(new THREE.AmbientLight(0xffffff, 1));
 
     this.scene.add(level.playerMesh);
     for (let colliderMesh of level.colliderMeshes) {
