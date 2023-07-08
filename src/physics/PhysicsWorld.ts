@@ -52,9 +52,8 @@ class PhysicsWorld {
         collisionResponse(this.particles, 0, normal, penetration, 0.0)
 
         const popSpeed = 5;
-
+        console.log(collider.mesh.userData.deltaBetaRad);
         if (collider.mesh.userData.popPosZ && this.player.position.z - collider.mesh.position.z < -collider.depth/4){
-          console.log('here')
           this.particles._addVelocity(0,0,popSpeed,0); 
           
         }
