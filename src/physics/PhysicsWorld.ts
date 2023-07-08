@@ -96,7 +96,7 @@ class PhysicsWorld {
         const popSensitivity = 0.05;
 
         if (
-          dBetaRad > popSensitivity &&
+          dBetaRad < -popSensitivity &&
           this.player.position.z - collider.mesh.position.z <
             -collider.depth / 4
         ) {
@@ -104,22 +104,23 @@ class PhysicsWorld {
         }
 
         if (
-          dBetaRad < -popSensitivity &&
+          dBetaRad > popSensitivity &&
           this.player.position.z - collider.mesh.position.z > collider.depth / 4
         ) {
           this.player.pop();
         }
 
+
         if (
-          dGammaRad > popSensitivity &&
+          dGammaRad < popSensitivity &&
           this.player.position.x - collider.mesh.position.x > collider.width / 4
         ) {
           this.player.pop();
         }
 
         if (
-          dGammaRad < -popSensitivity &&
-          this.player.position.x - collider.mesh.position.x >
+          dGammaRad > -popSensitivity &&
+          this.player.position.x - collider.mesh.position.x <
             -collider.width / 4
         ) {
           this.player.pop();
