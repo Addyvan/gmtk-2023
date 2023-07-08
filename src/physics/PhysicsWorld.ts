@@ -93,26 +93,36 @@ class PhysicsWorld {
           continue;
         }
 
-        const popSensitivity = 0.1;
+        const popSensitivity = 0.05;
+
         if (
-          Math.abs(dBetaRad) > popSensitivity ||
-          Math.abs(dGammaRad) > popSensitivity
+          dBetaRad > popSensitivity &&
+          this.player.position.z - collider.mesh.position.z <
+            -collider.depth / 4
         ) {
-          // if pop sensitivity is high enough check the player's
-          // position with respect to the collider to decide whether
-          // or not to pop
-          if (
-            this.player.position.z - collider.mesh.position.z <
-              -collider.depth / 4 ||
-            this.player.position.z - collider.mesh.position.z >
-              collider.depth / 4 ||
-            this.player.position.x - collider.mesh.position.x >
-              collider.width / 4 ||
-            this.player.position.x - collider.mesh.position.x >
-              -collider.width / 4
-          ) {
-            this.player.pop();
-          }
+          this.player.pop();
+        }
+
+        if (
+          dBetaRad < -popSensitivity &&
+          this.player.position.z - collider.mesh.position.z > collider.depth / 4
+        ) {
+          this.player.pop();
+        }
+
+        if (
+          dGammaRad > popSensitivity &&
+          this.player.position.x - collider.mesh.position.x > collider.width / 4
+        ) {
+          this.player.pop();
+        }
+
+        if (
+          dGammaRad < -popSensitivity &&
+          this.player.position.x - collider.mesh.position.x >
+            -collider.width / 4
+        ) {
+          this.player.pop();
         }
       }
     }
