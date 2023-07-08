@@ -12,7 +12,6 @@ const loader = new GLTFLoader();
 function loadLevel(name: string): Promise<Level> {
   return new Promise((resolve, reject) => {
     const onLoad = (gltf: GLTF) => {
-
       let player: THREE.Mesh<THREE.SphereGeometry>;
       let colliders: Array<THREE.Mesh<THREE.BoxGeometry>> = [];
 
@@ -26,12 +25,13 @@ function loadLevel(name: string): Promise<Level> {
               obj.geometry,
               obj.scale.add(new THREE.Vector3(0.2, 0.2, 0.2))
             ),
-            new THREE.MeshBasicMaterial({ color: 0xffffff })
+            new THREE.MeshStandardMaterial({ color: 0xffffff })
           );
           player.position.set(obj.position.x, obj.position.y, obj.position.z);
         }
 
-        if (obj.userData.collider) {
+        if (obj.userData.collider === true) {
+          console.log(obj.userData);
           colliders.push(obj);
         }
       });
