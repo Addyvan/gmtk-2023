@@ -4,10 +4,12 @@ import { Particles, pSize } from "ptcl";
 class Player {
   particles: Particles;
   mesh: THREE.Mesh<THREE.SphereGeometry>;
+  isFlying: boolean;
 
   constructor(particles: Particles, mesh: THREE.Mesh<THREE.SphereGeometry>) {
     this.particles = particles;
     this.mesh = mesh;
+    this.isFlying = true;
   }
 
   get radius() {

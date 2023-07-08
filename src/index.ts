@@ -24,7 +24,7 @@ async function start() {
     function start() {
       setInterval(() => {
         fixedUpdate();
-      }, 1000 / 30);
+      }, 1000 / 40);
       update();
     }
 
