@@ -99,7 +99,7 @@ class PhysicsWorld {
           .clone()
           .normalize()
           .multiplyScalar(-frictionCoeff * 10);
-        //this.particles._addForce(0, friction.x, friction.y, friction.z);
+        this.particles._addForce(0, friction.x, friction.y, friction.z);
 
         if (!collider.mesh.userData.controllable) {
           let velocity = this.particles._getVelocity(0);

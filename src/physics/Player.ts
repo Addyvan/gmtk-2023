@@ -6,13 +6,14 @@ class Player {
   mesh: THREE.Mesh<THREE.SphereGeometry>;
   isFlying: boolean;
   popSpeed: number = 1.9;
+  popSpeedUp: number = 2.5;
 
   framesSinceLastCollision: number = 0;
   timeSinceLastPop: number = 1000;
 
   startingPosition: THREE.Vector3;
 
-  // variable to store the number of frames where we 
+  // variable to store the number of frames where we
   // chilling on a non controllable platform not moving
   resetFramesCounter: number;
 
@@ -58,12 +59,7 @@ class Player {
     //this.mesh.material.color = new THREE.Color(0xff0000)
     this.isFlying = true;
     //this.particles._addVelocity(0, 0, this.popSpeed, 0);
-    this.particles._setVelocity(
-      0,
-      0,
-      2*this.popSpeed,
-      -this.popSpeed 
-    );
+    this.particles._setVelocity(0, 0, 2 * this.popSpeedUp, -this.popSpeed);
     this.timeSinceLastPop = 0;
   }
 }
