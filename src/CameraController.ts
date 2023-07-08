@@ -5,9 +5,13 @@ import Collider from "./physics/Collider";
 
 // TODO: Maybe the offset should be conditional based off the current active collider?
 
-const onPlatformOffset = new THREE.Vector3(0, 5, 3);
+const onPlatformOffset = new THREE.Vector3(0, 3, 2);
 
-const offPlatformOffset = new THREE.Vector3(0, 5 / 2, 3 / 2);
+const offPlatformOffset = new THREE.Vector3(
+  0,
+  onPlatformOffset.y - 1,
+  onPlatformOffset.z - 1
+);
 
 class CameraController {
   camera: THREE.PerspectiveCamera;
@@ -23,7 +27,7 @@ class CameraController {
     this.desiredPosition = new THREE.Vector3();
 
     this.camera = camera;
-    this.camera.position.set(0, 5, 3);
+    this.camera.position.set(0, onPlatformOffset.y, onPlatformOffset.z);
     this.camera.lookAt(0, 0, 0);
 
     this.player = null;
@@ -52,7 +56,7 @@ class CameraController {
       );
     }
 
-    this.currentPosition.lerp(this.desiredPosition, dt);
+    this.currentPosition.lerp(this.desiredPosition, dt * 10);
     this.camera.position.copy(this.currentPosition);
   }
 }

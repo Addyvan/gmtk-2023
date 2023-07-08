@@ -10,9 +10,12 @@ class Player {
   framesSinceLastCollision: number = 0;
   timeSinceLastPop: number = 1000;
 
+  startingPosition: THREE.Vector3;
+
   constructor(particles: Particles, mesh: THREE.Mesh<THREE.SphereGeometry>) {
     this.particles = particles;
     this.mesh = mesh;
+    this.startingPosition = mesh.position.clone();
     this.isFlying = true;
   }
 
@@ -22,6 +25,16 @@ class Player {
 
   get position() {
     return this.particles._getPosition(0);
+  }
+
+  reset() {
+    this.particles._setVelocity(0, 0, 0, 0);
+    this.particles._setPosition(
+      0,
+      this.startingPosition.x,
+      this.startingPosition.y,
+      this.startingPosition.z
+    );
   }
 
   update(dt: number) {

@@ -4,6 +4,10 @@ import { Level } from "./utils/loadLevel";
 import CameraController from "./CameraController";
 import Collider from "./physics/Collider";
 
+import { EffectComposer } from "three-stdlib";
+import { RenderPixelatedPass } from "three/examples/jsm/postprocessing/RenderPixelatedPass.js";
+import { OutputPass } from "three/examples/jsm/postprocessing/OutputPass.js";
+
 class AppState {
   renderer: THREE.WebGLRenderer;
   camera: THREE.PerspectiveCamera;
@@ -23,9 +27,12 @@ class AppState {
   deltaBetaRad: number = 0;
   deltaGammaRad: number = 0;
 
+  composer: EffectComposer;
+
   constructor() {
     // THREE.js init
     this.scene = new THREE.Scene();
+    this.scene.background = new THREE.Color(0x87ceeb);
     this.camera = new THREE.PerspectiveCamera(
       75,
       window.innerWidth / window.innerHeight,
@@ -37,15 +44,19 @@ class AppState {
     this.renderer = new THREE.WebGLRenderer({
       //@ts-ignore
       canvas: document.getElementById("canvas"),
+      antialias: true,
     });
-    this.renderer.outputEncoding = THREE.sRGBEncoding;
-    this.renderer.setSize(window.innerWidth, window.innerHeight);
+    this.renderer.outputColorSpace = THREE.SRGBColorSpace;
+    this.renderer.shadowMap.enabled = true;
+    this.renderer.useLegacyLights = false;
 
+    this.renderer.setSize(window.innerWidth, window.innerHeight);
     const onWindowResize = () => {
       this.camera.aspect = window.innerWidth / window.innerHeight;
       this.camera.updateProjectionMatrix();
 
       this.renderer.setSize(window.innerWidth, window.innerHeight);
+      this.composer.setSize(window.innerWidth, window.innerHeight);
     };
 
     window.addEventListener("resize", onWindowResize, false);
@@ -57,12 +68,28 @@ class AppState {
     window.addEventListener("phonemove", (evt: any) =>
       this.handlePhoneMove(evt)
     );
+
+    this.composer = new EffectComposer(this.renderer);
+    const renderPixelatedPass = new RenderPixelatedPass(
+      2,
+      this.scene,
+      this.camera
+    );
+    renderPixelatedPass.normalEdgeStrength = 1;
+    renderPixelatedPass.depthEdgeStrength = 1;
+    this.composer.addPass(renderPixelatedPass);
+
+    const outputPass = new OutputPass();
+    this.composer.addPass(outputPass);
   }
 
   setLevel(level: Level) {
     // clear the scene
     this.scene.remove.apply(this.scene, this.scene.children);
-    this.scene.add(new THREE.AmbientLight(0xffffff, 1));
+    this.scene.add(new THREE.AmbientLight(0xffffff, 0.5));
+    const dirLight = new THREE.DirectionalLight(0xffffff, 1);
+    dirLight.position.set(25, 20, 25);
+    this.scene.add(dirLight);
 
     this.scene.add(level.playerMesh);
     for (let colliderMesh of level.colliderMeshes) {
@@ -102,7 +129,8 @@ class AppState {
   }
 
   render() {
-    this.renderer.render(this.scene, this.camera);
+    // this.renderer.render(this.scene, this.camera);
+    this.composer.render();
   }
 }
 

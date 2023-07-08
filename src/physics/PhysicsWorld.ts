@@ -46,6 +46,11 @@ class PhysicsWorld {
     // hacky might need to change?
     this.particles._addForce(0, 0, -10, 0);
 
+    if (this.player.position.y < -5) {
+      this.player.reset();
+      return;
+    }
+
     for (let collider of this.colliders) {
       if (!this.player.isFlying && !collider.isActive()) continue;
 
@@ -75,7 +80,7 @@ class PhysicsWorld {
           state.setActiveCollider(collider);
         }
       } else {
-        if (this.player.framesSinceLastCollision > 7) {
+        if (this.player.framesSinceLastCollision > 15) {
           this.player.isFlying = true;
           this.player.timeSinceLastPop = 0;
         }
@@ -87,13 +92,12 @@ class PhysicsWorld {
         collisionResponse(this.particles, 0, normal, penetration, 0.0);
 
         let frictionCoeff = 0.1;
-        let friction = this.particles._getVelocity(0).clone().normalize().multiplyScalar(-frictionCoeff*10)
-        this.particles._addForce(
-          0,
-          friction.x,
-          friction.y,
-          friction.z 
-        )
+        let friction = this.particles
+          ._getVelocity(0)
+          .clone()
+          .normalize()
+          .multiplyScalar(-frictionCoeff * 10);
+        this.particles._addForce(0, friction.x, friction.y, friction.z);
 
         let dBetaRad = state.deltaBetaRad;
         let dGammaRad = state.deltaGammaRad;
@@ -118,7 +122,6 @@ class PhysicsWorld {
         ) {
           this.player.pop();
         }
-
 
         if (
           dGammaRad < popSensitivity &&

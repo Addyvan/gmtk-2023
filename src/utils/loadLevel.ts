@@ -12,7 +12,6 @@ const loader = new GLTFLoader();
 function loadLevel(name: string): Promise<Level> {
   return new Promise((resolve, reject) => {
     const onLoad = (gltf: GLTF) => {
-      console.log("gltf", gltf);
 
       let player: THREE.Mesh<THREE.SphereGeometry>;
       let colliders: Array<THREE.Mesh<THREE.BoxGeometry>> = [];
