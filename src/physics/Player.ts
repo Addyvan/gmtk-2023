@@ -5,7 +5,7 @@ class Player {
   particles: Particles;
   mesh: THREE.Mesh<THREE.SphereGeometry>;
   isFlying: boolean;
-  popSpeed: number = 3;
+  popSpeed: number = 1.9;
 
   framesSinceLastCollision: number = 0;
   timeSinceLastPop: number = 1000;
@@ -48,8 +48,16 @@ class Player {
   }
 
   pop() {
+    // @ts-ignore
+    //this.mesh.material.color = new THREE.Color(0xff0000)
     this.isFlying = true;
-    this.particles._addVelocity(0, 0, this.popSpeed, 0);
+    //this.particles._addVelocity(0, 0, this.popSpeed, 0);
+    this.particles._setVelocity(
+      0,
+      0,
+      2*this.popSpeed,
+      -this.popSpeed 
+    );
     this.timeSinceLastPop = 0;
   }
 }

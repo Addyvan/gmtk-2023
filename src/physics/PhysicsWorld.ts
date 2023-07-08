@@ -89,7 +89,9 @@ class PhysicsWorld {
       // Handle interaction between the player and the platform
       if (collided) {
         this.player.framesSinceLastCollision = 0;
-        collisionResponse(this.particles, 0, normal, penetration, 0.0);
+        if (this.player.timeSinceLastPop > 0.2) {
+          collisionResponse(this.particles, 0, normal, penetration, 0.0);
+        }
 
         let frictionCoeff = 0.1;
         let friction = this.particles
@@ -97,7 +99,7 @@ class PhysicsWorld {
           .clone()
           .normalize()
           .multiplyScalar(-frictionCoeff * 10);
-        this.particles._addForce(0, friction.x, friction.y, friction.z);
+        //this.particles._addForce(0, friction.x, friction.y, friction.z);
 
         let dBetaRad = state.deltaBetaRad;
         let dGammaRad = state.deltaGammaRad;
@@ -116,6 +118,7 @@ class PhysicsWorld {
           this.player.pop();
         }
 
+        /**
         if (
           dBetaRad > popSensitivity &&
           this.player.position.z - collider.mesh.position.z > collider.depth / 4
@@ -137,6 +140,7 @@ class PhysicsWorld {
         ) {
           this.player.pop();
         }
+        **/
       }
     }
 
