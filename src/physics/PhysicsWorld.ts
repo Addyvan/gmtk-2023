@@ -86,6 +86,15 @@ class PhysicsWorld {
         this.player.framesSinceLastCollision = 0;
         collisionResponse(this.particles, 0, normal, penetration, 0.0);
 
+        let frictionCoeff = 0.1;
+        let friction = this.particles._getVelocity(0).clone().normalize().multiplyScalar(-frictionCoeff*10)
+        this.particles._addForce(
+          0,
+          friction.x,
+          friction.y,
+          friction.z 
+        )
+
         let dBetaRad = state.deltaBetaRad;
         let dGammaRad = state.deltaGammaRad;
 
