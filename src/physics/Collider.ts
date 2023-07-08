@@ -5,28 +5,29 @@ class Collider {
   mesh: THREE.Mesh<THREE.BoxGeometry>;
   geometry: THREE.BoxGeometry;
 
-  deltaBetaRad: number;
-
   constructor(mesh: THREE.Mesh<THREE.BoxGeometry>) {
     this.mesh = mesh;
 
-    const prevBetaRads = [];
+    this.mesh.userData.prevBetaRads = [];
+    this.mesh.userData.prevGammaRads = [];
 
     // TODO: CHANGE ASAP (ADDY)
     const handlePhoneMove = (evt: CustomEvent) => {
       const { alphaRad, betaRad, gammaRad } = evt.detail;
 
-      prevBetaRads.unshift(betaRad);
-      if (prevBetaRads.length > 5) {
-        prevBetaRads.pop();
+      this.mesh.userData.prevBetaRads.unshift(betaRad);
+      if (this.mesh.userData.prevBetaRads.length > 10) {
+        this.mesh.userData.prevBetaRads.pop();
       }
-      console.log(prevBetaRads);
-      let deltaBetaRad = Math.abs(prevBetaRads[0] - prevBetaRads[4]);
+
+      this.mesh.userData.prevGammaRads.unshift(gammaRad);
+      if (this.mesh.userData.prevGammaRads.length > 10) {
+        this.mesh.userData.prevGammaRads.pop();
+      }
 
       if (this.mesh.userData.movable) {
-        this.mesh.userData.deltaBetaRad = deltaBetaRad;
-        this.mesh.userData.popPosZ =
-          betaRad - this.mesh.rotation.x > 0.1 ? true : false;
+        this.mesh.userData.deltaBetaRad = this.mesh.userData.prevBetaRads[0]-this.mesh.userData.prevBetaRads[1];
+        this.mesh.userData.deltaGammaRad = -(this.mesh.userData.prevGammaRads[0]-this.mesh.userData.prevGammaRads[1]);
         this.mesh.rotation.set(betaRad, 0, -gammaRad);
       }
     };

@@ -51,13 +51,29 @@ class PhysicsWorld {
 
         collisionResponse(this.particles, 0, normal, penetration, 0.0)
 
-        const popSpeed = 5;
-        console.log(collider.mesh.userData.deltaBetaRad);
-        if (collider.mesh.userData.popPosZ && this.player.position.z - collider.mesh.position.z < -collider.depth/4){
-          this.particles._addVelocity(0,0,popSpeed,0); 
-          
-        }
+        const popSpeed = 3;
 
+      //console.log(collider.mesh.userData.deltaGammaRad > 0.05, this.player.position.x - collider.mesh.position.x > collider.depth/4, collider.mesh.userData.prevGammaRads.length == 10)
+
+        if ((collider.mesh.userData.deltaBetaRad > 0.1 && 
+            this.player.position.z - collider.mesh.position.z < -collider.depth/4 && 
+            collider.mesh.userData.prevBetaRads.length == 10) || 
+            (collider.mesh.userData.deltaBetaRad < -0.1 && 
+            this.player.position.z - collider.mesh.position.z > collider.depth/4 && 
+            collider.mesh.userData.prevBetaRads.length == 10) || 
+            (collider.mesh.userData.deltaGammaRad > 0.1 && 
+            this.player.position.x - collider.mesh.position.x > collider.width/4 && 
+            collider.mesh.userData.prevGammaRads.length == 10) ||
+            (collider.mesh.userData.deltaGammaRad < -0.1 && 
+            this.player.position.x - collider.mesh.position.x > -collider.width/4 && 
+            collider.mesh.userData.prevGammaRads.length == 10)) {
+
+          console.log('pop');
+          this.particles._addVelocity(0,0,popSpeed,0); 
+          collider.mesh.userData.prevBetaRads = [];
+          collider.mesh.userData.prevGammaRads = [];
+        }
+        
         if (collider.mesh.userData.endPlatform){
           //console.log('level complete!')
         }
