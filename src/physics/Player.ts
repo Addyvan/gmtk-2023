@@ -12,11 +12,16 @@ class Player {
 
   startingPosition: THREE.Vector3;
 
+  // variable to store the number of frames where we 
+  // chilling on a non controllable platform not moving
+  resetFramesCounter: number;
+
   constructor(particles: Particles, mesh: THREE.Mesh<THREE.SphereGeometry>) {
     this.particles = particles;
     this.mesh = mesh;
     this.startingPosition = mesh.position.clone();
     this.isFlying = true;
+    this.resetFramesCounter = 0;
   }
 
   get radius() {
@@ -35,6 +40,7 @@ class Player {
       this.startingPosition.y,
       this.startingPosition.z
     );
+    this.resetFramesCounter = 0;
   }
 
   update(dt: number) {

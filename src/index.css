@@ -1,9 +1,14 @@
+@font-face {
+  font-family: Kenney;
+  src: url("/assets/Kenney-High.ttf");
+}
+
 html,
 body {
   margin: 0px;
   overflow: hidden;
   background-color: black;
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: Kenney;
   box-sizing: border-box;
 }
 
@@ -19,6 +24,7 @@ body {
 
 #device-calibrate-text {
   width: 100%;
+  font-size: 32px;
 }
 
 #device-calibrate-button-container {
@@ -37,25 +43,30 @@ body {
   font-size: 32px;
   border: none;
   background: none;
-  background-color: #333333;
+  background-color: #37946c;
   font-weight: 600;
   padding: 8px;
   height: 48px;
   box-sizing: border-box;
-  color: white;
+  color: #6abe30;
   border-radius: 2px;
+  font-family: Kenney;
 }
 
 #device-calibrate-container {
   z-index: 1000;
   box-sizing: border-box;
-  background-color: black;
-  color: white;
+  color: black;
   position: fixed;
   display: flex;
   justify-content: center;
   align-items: center;
   width: 100vw;
   height: 100vh;
-  font-size: 15px;
+  font-weight: 600;
+  font-size: 20px;
+  background-color: #87ceeb;
+}
+
+#hole-timer {
 }

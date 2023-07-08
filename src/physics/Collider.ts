@@ -52,7 +52,8 @@ class Collider {
   }
 
   setRotationFromDeviceOrientation(betaRad: number, gammaRad: number) {
-    this.mesh.rotation.set(betaRad, 0, -gammaRad);
+    if (this.mesh.userData.controllable)
+      this.mesh.rotation.set(betaRad, 0, -gammaRad);
   }
 
   setDebugColor(collided: boolean) {
@@ -69,6 +70,5 @@ class Collider {
     }
   }
 }
-
 
 export default Collider;

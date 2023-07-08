@@ -29,6 +29,8 @@ class AppState {
 
   composer: EffectComposer;
 
+  holeClock: THREE.Clock = new THREE.Clock();
+
   constructor() {
     // THREE.js init
     this.scene = new THREE.Scene();
@@ -75,8 +77,8 @@ class AppState {
       this.scene,
       this.camera
     );
-    renderPixelatedPass.normalEdgeStrength = 1;
-    renderPixelatedPass.depthEdgeStrength = 1;
+    renderPixelatedPass.normalEdgeStrength = 0.8;
+    renderPixelatedPass.depthEdgeStrength = 0.6;
     this.composer.addPass(renderPixelatedPass);
 
     const outputPass = new OutputPass();
@@ -88,7 +90,7 @@ class AppState {
     this.scene.remove.apply(this.scene, this.scene.children);
     this.scene.add(new THREE.AmbientLight(0xffffff, 0.5));
     const dirLight = new THREE.DirectionalLight(0xffffff, 1);
-    dirLight.position.set(25, 20, 25);
+    dirLight.position.set(50, 20, 0);
     this.scene.add(dirLight);
 
     this.scene.add(level.playerMesh);
@@ -97,6 +99,8 @@ class AppState {
     }
 
     this.physics = new PhysicsWorld(level.playerMesh, level.colliderMeshes);
+    this.holeClock.stop();
+    this.holeClock.start();
   }
 
   handlePhoneMove(evt: CustomEvent<any>) {

@@ -80,7 +80,7 @@ class PhysicsWorld {
           state.setActiveCollider(collider);
         }
       } else {
-        if (this.player.framesSinceLastCollision > 15) {
+        if (this.player.framesSinceLastCollision > 10) {
           this.player.isFlying = true;
           this.player.timeSinceLastPop = 0;
         }
@@ -99,13 +99,23 @@ class PhysicsWorld {
           .multiplyScalar(-frictionCoeff * 10);
         this.particles._addForce(0, friction.x, friction.y, friction.z);
 
-        let dBetaRad = state.deltaBetaRad;
-        let dGammaRad = state.deltaGammaRad;
+        if (!collider.mesh.userData.controllable) {
+          let velocity = this.particles._getVelocity(0);
+          if (velocity.lengthSq() < 0.03) {
+            this.player.resetFramesCounter += 1;
+            if (this.player.resetFramesCounter > 30) {
+              this.player.reset();
+            }
+          }
+          continue;
+        }
 
         if (this.player.timeSinceLastPop < 0.2) {
           continue;
         }
 
+        let dBetaRad = state.deltaBetaRad;
+        let dGammaRad = state.deltaGammaRad;
         const popSensitivity = 0.05;
 
         if (

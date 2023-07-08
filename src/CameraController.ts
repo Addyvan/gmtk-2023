@@ -42,7 +42,9 @@ class CameraController {
       return;
     }
 
-    if (!this.player.isFlying) {
+
+
+    if (!this.player.isFlying || (state.activeCollider === null) ? false : !state.activeCollider.mesh.userData.controllable ) {
       this.desiredPosition.set(
         state.activeCollider.position.x + onPlatformOffset.x,
         state.activeCollider.position.y + onPlatformOffset.y,

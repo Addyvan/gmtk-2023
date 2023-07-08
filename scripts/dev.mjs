@@ -46,7 +46,7 @@ async function build() {
         ".wav": "dataurl",
         ".mp3": "dataurl",
       },
-      external: ["require", "fs", "crypto", "assert", "url"],
+      external: ["require", "fs", "crypto", "assert", "url", "*.ttf"],
       watch: {
         onRebuild: onBuild,
       },
