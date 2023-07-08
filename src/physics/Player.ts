@@ -5,6 +5,10 @@ class Player {
   particles: Particles;
   mesh: THREE.Mesh<THREE.SphereGeometry>;
   isFlying: boolean;
+  popSpeed: number = 3;
+
+  framesSinceLastCollision: number = 0;
+  timeSinceLastPop: number = 1000;
 
   constructor(particles: Particles, mesh: THREE.Mesh<THREE.SphereGeometry>) {
     this.particles = particles;
@@ -20,12 +24,20 @@ class Player {
     return this.particles._getPosition(0);
   }
 
-  updatePos() {
+  update(dt: number) {
+    this.timeSinceLastPop += dt;
+    // update position
     this.mesh.position.set(
       this.particles.data[0 * pSize],
       this.particles.data[0 * pSize + 1],
       this.particles.data[0 * pSize + 2]
     );
+  }
+
+  pop() {
+    this.isFlying = true;
+    this.particles._addVelocity(0, 0, this.popSpeed, 0);
+    this.timeSinceLastPop = 0;
   }
 }
 

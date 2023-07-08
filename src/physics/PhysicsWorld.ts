@@ -1,18 +1,26 @@
-import {Particles} from "ptcl";
+import * as THREE from "three";
+import { Particles } from "ptcl";
 import Player from "./Player";
 import Collider from "./Collider";
-import {collisionDetection, collisionResponse} from "./core";
+import {
+  collisionDetection,
+  collisionResponse,
+  closestPointOnBox,
+} from "./core";
 import state from "../state";
 
 class PhysicsWorld {
-
   maxParticles: number;
   particles: Particles;
 
-  player : Player;
-  colliders : Array<Collider>;
+  player: Player;
+  colliders: Array<Collider>;
 
-  constructor(playerMesh: THREE.Mesh<THREE.SphereGeometry>, colliderMeshArr: Array<THREE.Mesh<THREE.BoxGeometry>>, maxParticles: number = 1) {
+  constructor(
+    playerMesh: THREE.Mesh<THREE.SphereGeometry>,
+    colliderMeshArr: Array<THREE.Mesh<THREE.BoxGeometry>>,
+    maxParticles: number = 1
+  ) {
     this.maxParticles = maxParticles;
     this.particles = new Particles(this.maxParticles);
     // TODO come up with a proper way of initializing a level's particle
@@ -30,47 +38,87 @@ class PhysicsWorld {
     this.player = new Player(this.particles, playerMesh);
     state.cameraController.setPlayer(this.player);
     this.colliders = colliderMeshArr.map((colliderMesh) => {
-      return(new Collider(colliderMesh));
-    })
+      return new Collider(colliderMesh);
+    });
   }
 
-  update(dt : number) {
-
+  update(dt: number) {
     // hacky might need to change?
     this.particles._addForce(0, 0, -10, 0);
 
-    this.player.isFlying = true;
     for (let collider of this.colliders) {
-      let {collided, normal, penetration} = collisionDetection(
+      if (!this.player.isFlying && !collider.isActive()) continue;
+
+      const { collided, normal, penetration } = collisionDetection(
         this.player,
         collider
       );
+      if (!collided) {
+        this.player.framesSinceLastCollision += 1;
+      }
 
+      if (collider.mesh.userData.endPlatform) {
+        //console.log('level complete!')
+      } else {
+        collider.setDebugColor(collided);
+      }
+
+      if (this.player.isFlying) {
+        // if we are flying and have not collided with a platform then do nothing
+        if (!collided) continue;
+
+        // if we are flying and have collided then we should set the active collider
+        // and toggle player.isFlying
+        if (this.player.timeSinceLastPop > 0.1) {
+          this.player.isFlying = false;
+          this.player.framesSinceLastCollision = 0;
+          state.setActiveCollider(collider);
+        }
+      } else {
+        if (this.player.framesSinceLastCollision > 7) {
+          this.player.isFlying = true;
+          this.player.timeSinceLastPop = 0;
+        }
+      }
+
+      // Handle interaction between the player and the platform
       if (collided) {
-        this.player.isFlying = false;
+        this.player.framesSinceLastCollision = 0;
+        collisionResponse(this.particles, 0, normal, penetration, 0.0);
 
-        collisionResponse(this.particles, 0, normal, penetration, 0.0)
+        let dBetaRad = state.deltaBetaRad;
+        let dGammaRad = state.deltaGammaRad;
 
-        const popSpeed = 5;
-        console.log(collider.mesh.userData.deltaBetaRad);
-        if (collider.mesh.userData.popPosZ && this.player.position.z - collider.mesh.position.z < -collider.depth/4){
-          this.particles._addVelocity(0,0,popSpeed,0); 
-          
+        if (this.player.timeSinceLastPop < 0.2) {
+          continue;
         }
 
-        if (collider.mesh.userData.endPlatform){
-          //console.log('level complete!')
+        const popSensitivity = 0.1;
+        if (
+          Math.abs(dBetaRad) > popSensitivity ||
+          Math.abs(dGammaRad) > popSensitivity
+        ) {
+          // if pop sensitivity is high enough check the player's
+          // position with respect to the collider to decide whether
+          // or not to pop
+          if (
+            this.player.position.z - collider.mesh.position.z <
+              -collider.depth / 4 ||
+            this.player.position.z - collider.mesh.position.z >
+              collider.depth / 4 ||
+            this.player.position.x - collider.mesh.position.x >
+              collider.width / 4 ||
+            this.player.position.x - collider.mesh.position.x >
+              -collider.width / 4
+          ) {
+            this.player.pop();
+          }
         }
       }
     }
 
-
-    // TODO: Come up with a proper system for mapping physics changes to the objects
-    this.player.updatePos();
-  
     this.particles.integrate(dt);
   }
-
-};
+}
 
 export default PhysicsWorld;

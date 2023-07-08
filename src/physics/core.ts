@@ -57,6 +57,7 @@ export function collisionDetection(player: Player, collider: Collider) {
         penetration = player.radius - vec[idx];
       }
     }
+
   }
   return {
     penetration,
@@ -87,90 +88,24 @@ export function collisionResponse(
   );
 }
 
-export function particleBoxCollisionDetectionOLD(
-  particle: ParticleRef,
-  particleGeometry: THREE.SphereGeometry,
-  box: THREE.Mesh,
-  boxGeometry: THREE.BoxGeometry
-) {
-  let relCenter = particle.getPosition().addScaledVector(box.position, -1);
-  const quaternion = new THREE.Quaternion(
-    -box.quaternion.x,
-    -box.quaternion.y,
-    -box.quaternion.z,
-    box.quaternion.w
-  );
-  relCenter.applyQuaternion(quaternion);
-  let collided = false;
-  let normal = new THREE.Vector3();
-  let penetration = 0;
-  const radius = particleGeometry.parameters.radius;
-  const [width, height, depth] = [
-    boxGeometry.parameters.width,
-    boxGeometry.parameters.height,
-    boxGeometry.parameters.depth,
-  ];
-  if (
-    Math.abs(relCenter.x) <= radius + width / 2 &&
-    Math.abs(relCenter.y) <= radius + height / 2 &&
-    Math.abs(relCenter.z) <= radius + depth / 2
-  ) {
-    const vec = [
-      Math.abs(width / 2 - relCenter.x),
-      Math.abs(-width / 2 - relCenter.x),
-      Math.abs(height / 2 - relCenter.y),
-      Math.abs(-height / 2 - relCenter.y),
-      Math.abs(depth / 2 - relCenter.z),
-      Math.abs(-depth / 2 - relCenter.z),
-    ];
-    const idx = argmin(vec);
-    if (idx == 2) {
-      collided = true;
-      normal.x = idx < 2 ? 1 : 0;
-      normal.y = idx >= 2 && idx < 4 ? 1 : 0;
-      normal.z = idx >= 4 && idx < 6 ? 1 : 0;
-      const sign = idx % 2 == 0 ? 1 : -1;
-      normal.multiplyScalar(sign);
-      normal.applyQuaternion(box.quaternion);
+export function closestPointOnBox(player : Player, collider: Collider) : THREE.Vector3 {
+  const sphereCenter = player.position.clone();
 
-      if (
-        Math.abs(relCenter.x) <= width / 2 &&
-        Math.abs(relCenter.y) <= height / 2 &&
-        Math.abs(relCenter.z) <= depth / 2
-      ) {
-        penetration = radius + vec[idx];
-      } else {
-        penetration = radius - vec[idx];
-      }
-    }
-  }
-  let values: [boolean, THREE.Vector3, number] = [
-    collided,
-    normal,
-    penetration,
-  ];
-  return values;
-}
-
-export function collisionResponseOLD(
-  particles: Particles,
-  pIndex: number,
-  normal: THREE.Vector3,
-  penetration: number,
-  dt: number,
-  Cr = 0.5
-) {
-  particles._addPosition(
-    pIndex,
-    penetration * normal.x,
-    penetration * normal.y,
-    penetration * normal.z
+  const clampedX = THREE.MathUtils.clamp(
+    sphereCenter.x,
+    collider.position.x - collider.width / 2,
+    collider.position.x + collider.width / 2
   );
-  let norm = Math.abs((1 + Cr) * particles._getVelocity(pIndex).dot(normal));
-  particles._addVelocity(
-    pIndex,
-    norm * normal.x,
-    norm * normal.y,
-    norm * normal.z
+  const clampedY = THREE.MathUtils.clamp(
+    sphereCenter.y,
+    collider.position.y - collider.height / 2,
+    collider.position.y + collider.height / 2
   );
+  const clampedZ = THREE.MathUtils.clamp(
+    sphereCenter.z,
+    collider.position.z - collider.depth / 2,
+    collider.position.z + collider.depth / 2
+  );
+  
+  return new THREE.Vector3(clampedX, clampedY, clampedZ);
 }
