@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import Player from "./physics/Player";
+import state from "./state";
 import Collider from "./physics/Collider";
 
 // TODO: Maybe the offset should be conditional based off the current active collider?
@@ -36,12 +37,20 @@ class CameraController {
     if (this.player === null) {
       return;
     }
-    let offset = this.player.isFlying ? offPlatformOffset : onPlatformOffset;
-    this.desiredPosition.set(
-      this.player.position.x + offset.x,
-      this.player.position.y + offset.y,
-      this.player.position.z + offset.z
-    );
+
+    if (!this.player.isFlying) {
+      this.desiredPosition.set(
+        state.activeCollider.position.x + onPlatformOffset.x,
+        state.activeCollider.position.y + onPlatformOffset.y,
+        state.activeCollider.position.z + onPlatformOffset.z
+      );
+    } else {
+      this.desiredPosition.set(
+        this.player.position.x + offPlatformOffset.x,
+        this.player.position.y + offPlatformOffset.y,
+        this.player.position.z + offPlatformOffset.z
+      );
+    }
 
     this.currentPosition.lerp(this.desiredPosition, dt);
     this.camera.position.copy(this.currentPosition);

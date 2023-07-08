@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import checkSupportFor from "../utils/checkSupport";
+import state from "../state";
 
 class Collider {
   mesh: THREE.Mesh<THREE.BoxGeometry>;
@@ -7,30 +7,21 @@ class Collider {
 
   deltaBetaRad: number;
 
+  // if true then we should be lerping back to original position
+  needsUpdate: boolean = false;
+  originalOrientation: THREE.Quaternion;
+
   constructor(mesh: THREE.Mesh<THREE.BoxGeometry>) {
     this.mesh = mesh;
+    this.originalOrientation = this.mesh.quaternion.clone();
+    if (this.mesh.userData.endPlatform) {
+      //@ts-ignore
+      this.mesh.material.color = new THREE.Color(0x0000ff);
+    }
+  }
 
-    const prevBetaRads = [];
-
-    // TODO: CHANGE ASAP (ADDY)
-    const handlePhoneMove = (evt: CustomEvent) => {
-      const { alphaRad, betaRad, gammaRad } = evt.detail;
-
-      prevBetaRads.unshift(betaRad);
-      if (prevBetaRads.length > 5) {
-        prevBetaRads.pop();
-      }
-      console.log(prevBetaRads);
-      let deltaBetaRad = Math.abs(prevBetaRads[0] - prevBetaRads[4]);
-
-      if (this.mesh.userData.movable) {
-        this.mesh.userData.deltaBetaRad = deltaBetaRad;
-        this.mesh.userData.popPosZ =
-          betaRad - this.mesh.rotation.x > 0.1 ? true : false;
-        this.mesh.rotation.set(betaRad, 0, -gammaRad);
-      }
-    };
-    window.addEventListener("phonemove", handlePhoneMove);
+  get id() {
+    return this.mesh.id;
   }
 
   get position() {
@@ -51,6 +42,28 @@ class Collider {
 
   get depth() {
     return this.mesh.geometry.parameters.depth;
+  }
+
+  isActive() {
+    return state.activeCollider.id === this.id;
+  }
+
+  setRotationFromDeviceOrientation(betaRad: number, gammaRad: number) {
+    this.mesh.rotation.set(betaRad, 0, -gammaRad);
+  }
+
+  setDebugColor(collided: boolean) {
+    //@ts-ignore
+    this.mesh.material.color = collided
+      ? new THREE.Color(0xff0000)
+      : new THREE.Color(0x00ff00);
+  }
+
+  update(dt: number) {
+    this.mesh.quaternion.slerp(this.originalOrientation, dt);
+    if (this.mesh.quaternion.dot(this.originalOrientation) < dt) {
+      this.needsUpdate = false;
+    }
   }
 }
 

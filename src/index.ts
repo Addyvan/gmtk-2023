@@ -5,6 +5,23 @@ import { update, fixedUpdate } from "./update";
 import state from "./state";
 import DeviceOrientationHandler from "./utils/DeviceOrientationHandler";
 
+// The wake lock sentinel.
+let wakeLock = null;
+
+// Function that attempts to request a screen wake lock.
+const requestWakeLock = async () => {
+  try {
+    //@ts-ignore
+    wakeLock = await navigator.wakeLock.request();
+    wakeLock.addEventListener("release", () => {
+      console.log("Screen Wake Lock released:", wakeLock.released);
+    });
+    console.log("Screen Wake Lock released:", wakeLock.released);
+  } catch (err) {
+    console.error(`${err.name}, ${err.message}`);
+  }
+};
+
 const deviceOrientationHandler = new DeviceOrientationHandler();
 
 function sleep(ms) {
@@ -12,6 +29,8 @@ function sleep(ms) {
 }
 
 async function start() {
+  // Request a screen wake lock…
+  await requestWakeLock();
   while (true) {
     if (deviceOrientationHandler.calibrated) {
       break;

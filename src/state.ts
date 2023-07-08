@@ -2,6 +2,7 @@ import * as THREE from "three";
 import PhysicsWorld from "./physics/PhysicsWorld";
 import { Level } from "./utils/loadLevel";
 import CameraController from "./CameraController";
+import Collider from "./physics/Collider";
 
 class AppState {
   renderer: THREE.WebGLRenderer;
@@ -14,6 +15,13 @@ class AppState {
   clock: THREE.Clock;
   physicsClock: THREE.Clock;
   cameraController: CameraController;
+
+  activeCollider: Collider;
+
+  prevBetaRad: number = 0;
+  prevGammaRad: number = 0;
+  deltaBetaRad: number = 0;
+  deltaGammaRad: number = 0;
 
   constructor() {
     // THREE.js init
@@ -45,10 +53,13 @@ class AppState {
     this.clock = new THREE.Clock();
     this.physicsClock = new THREE.Clock();
 
+    this.activeCollider = null;
+    window.addEventListener("phonemove", (evt: any) =>
+      this.handlePhoneMove(evt)
+    );
   }
 
-  setLevel(level : Level) {
-    
+  setLevel(level: Level) {
     // clear the scene
     this.scene.remove.apply(this.scene, this.scene.children);
 
@@ -58,6 +69,35 @@ class AppState {
     }
 
     this.physics = new PhysicsWorld(level.playerMesh, level.colliderMeshes);
+  }
+
+  handlePhoneMove(evt: CustomEvent<any>) {
+    const { _, betaRad, gammaRad } = evt.detail;
+
+    // if we are currently balancing on a collider then move it
+    if (this.activeCollider !== null) {
+      this.activeCollider.setRotationFromDeviceOrientation(betaRad, gammaRad);
+
+      this.deltaBetaRad = this.prevBetaRad - betaRad;
+      this.deltaGammaRad = -(this.prevGammaRad - gammaRad);
+    }
+
+    this.prevBetaRad = betaRad;
+    this.prevGammaRad = gammaRad;
+  }
+
+  setActiveCollider(collider: Collider | null) {
+    this.deltaBetaRad = 0;
+    this.deltaGammaRad = 0;
+
+    if (this.activeCollider !== null) {
+      // setting needsUpdate to true here triggers the platform to be
+      // lerp-ed back to its original rotation
+      this.activeCollider.needsUpdate = true;
+      this.activeCollider = null;
+    }
+
+    this.activeCollider = collider;
   }
 
   render() {
