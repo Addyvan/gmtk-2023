@@ -56,7 +56,7 @@ class PhysicsWorld {
     // hacky might need to change?
     this.particles._addForce(0, 0, -10, 0);
 
-    if (this.player.position.y < -5) {
+    if (this.player.position.y < -50) {
       this.player.reset();
       return;
     }
@@ -64,7 +64,10 @@ class PhysicsWorld {
     for (let collider of this.colliders) {
       if (!this.player.isFlying && !collider.isActive()) continue;
 
-      let { collided, normal, penetration } = collider.collide(this.player);
+      let { collided, normal, penetration } = collider.mesh.userData
+        .controllable
+        ? collisionDetection(this.player, collider)
+        : collider.collide(this.player);
 
       if (!collided) {
         this.player.framesSinceLastCollision += 1;

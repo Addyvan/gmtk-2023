@@ -86,14 +86,24 @@ class Collider {
   }
 
   collide(player: Player) {
-
-
     // HELP ME NOT DO THIS PLEASE GOD
     if (this.octreeNeedsUpdate) {
       this.octree = new Octree();
       this.octree.fromGraphNode(this.mesh);
       this.octreeNeedsUpdate = false;
     }
+
+    // let transformedPos = player.position
+    //   .clone()
+    //   .addScaledVector(this.position, -1);
+    // const quaternion = new THREE.Quaternion(
+    //   -this.quaternion.x,
+    //   -this.quaternion.y,
+    //   -this.quaternion.z,
+    //   this.quaternion.w
+    // );
+    // transformedPos.applyQuaternion(quaternion);
+    // transformedPos.addScaledVector(this.position, +1);
 
     return this.octree.sphereIntersect(
       new THREE.Sphere(player.position, player.radius)

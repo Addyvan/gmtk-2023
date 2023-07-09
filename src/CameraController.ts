@@ -7,11 +7,7 @@ import Collider from "./physics/Collider";
 
 const onPlatformOffset = new THREE.Vector3(0, 3, 2);
 
-const offPlatformOffset = new THREE.Vector3(
-  0,
-  onPlatformOffset.y - 1,
-  onPlatformOffset.z - 1
-);
+const offPlatformOffset = new THREE.Vector3(0, 1, 1.2);
 
 class CameraController {
   camera: THREE.PerspectiveCamera;
@@ -42,17 +38,22 @@ class CameraController {
       return;
     }
 
-    if (!this.player.isFlying) {
-      this.desiredPosition.set(
-        state.activeCollider.position.x + onPlatformOffset.x,
-        state.activeCollider.position.y + onPlatformOffset.y,
-        state.activeCollider.position.z + onPlatformOffset.z
-      );
-    } else {
+    let onMoveable = false;
+    if (state.activeCollider !== null) {
+      onMoveable = state.activeCollider.mesh.userData.controllable;
+    }
+
+    if (this.player.isFlying || !onMoveable) {
       this.desiredPosition.set(
         this.player.position.x + offPlatformOffset.x,
         this.player.position.y + offPlatformOffset.y,
         this.player.position.z + offPlatformOffset.z
+      );
+    } else {
+      this.desiredPosition.set(
+        state.activeCollider.position.x + onPlatformOffset.x,
+        state.activeCollider.position.y + onPlatformOffset.y,
+        state.activeCollider.position.z + onPlatformOffset.z
       );
     }
 
