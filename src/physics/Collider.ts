@@ -65,9 +65,6 @@ class Collider {
   setRotationFromDeviceOrientation(betaRad: number, gammaRad: number) {
     if (this.mesh.userData.controllable) {
       this.mesh.rotation.set(betaRad, 0, -gammaRad);
-      this.octreeNeedsUpdate = true;
-      // this.octree.rotation.set(betaRad, 0, -gammaRad);
-      // this.octree.updateRotation(this.mesh.matrixWorld);
     }
   }
 
@@ -86,12 +83,6 @@ class Collider {
   }
 
   collide(player: Player) {
-    // HELP ME NOT DO THIS PLEASE GOD
-    if (this.octreeNeedsUpdate) {
-      this.octree = new Octree();
-      this.octree.fromGraphNode(this.mesh);
-      this.octreeNeedsUpdate = false;
-    }
 
     // let transformedPos = player.position
     //   .clone()
