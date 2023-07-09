@@ -21,10 +21,7 @@ function loadLevel(name: string): Promise<Level> {
             reject("Can only have one ball on a level!");
           }
           player = new THREE.Mesh(
-            bufferToSphereGeo(
-              obj.geometry,
-              obj.scale.add(new THREE.Vector3(0.2, 0.2, 0.2))
-            ),
+            bufferToSphereGeo(obj.geometry, obj.scale),
             new THREE.MeshStandardMaterial({ color: 0xffffff })
           );
           player.position.set(obj.position.x, obj.position.y, obj.position.z);

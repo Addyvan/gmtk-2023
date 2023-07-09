@@ -1,9 +1,13 @@
 import * as THREE from "three";
 import state from "../state";
 import bufferToBoxGeo from "../utils/bufferToBoxGeo";
+import { Octree } from "./Octree.js";
+//@ts-ignore
+import { OctreeHelper } from "three/addons/helpers/OctreeHelper.js";
+import Player from "./Player";
 
 class Collider {
-  mesh: THREE.Mesh<THREE.BoxGeometry>;
+  mesh: THREE.Mesh<THREE.BufferGeometry>;
   geometry: THREE.BufferGeometry;
   boxGeometry: THREE.BoxGeometry;
 
@@ -13,14 +17,21 @@ class Collider {
   needsUpdate: boolean = false;
   originalOrientation: THREE.Quaternion;
 
-  constructor(mesh: THREE.Mesh<THREE.BoxGeometry>) {
+  octree: Octree;
+  octreeHelper: OctreeHelper;
+  octreeNeedsUpdate: boolean = true;
+
+  desiredRotation: THREE.Vector3;
+
+  constructor(mesh: THREE.Mesh<THREE.BufferGeometry>) {
     this.mesh = mesh;
+
+    this.octree = new Octree();
+    this.octree.fromGraphNode(mesh);
+    console.log(this.octree.triangles);
+
     this.originalOrientation = this.mesh.quaternion.clone();
     this.boxGeometry = bufferToBoxGeo(mesh.geometry, mesh.scale);
-    if (this.mesh.userData.endPlatform) {
-      //@ts-ignore
-      this.mesh.material.color = new THREE.Color(0x0000ff);
-    }
   }
 
   get id() {
@@ -52,8 +63,12 @@ class Collider {
   }
 
   setRotationFromDeviceOrientation(betaRad: number, gammaRad: number) {
-    if (this.mesh.userData.controllable)
+    if (this.mesh.userData.controllable) {
       this.mesh.rotation.set(betaRad, 0, -gammaRad);
+      this.octreeNeedsUpdate = true;
+      // this.octree.rotation.set(betaRad, 0, -gammaRad);
+      // this.octree.updateRotation(this.mesh.matrixWorld);
+    }
   }
 
   setDebugColor(collided: boolean) {
@@ -68,6 +83,21 @@ class Collider {
     if (this.mesh.quaternion.dot(this.originalOrientation) < dt) {
       this.needsUpdate = false;
     }
+  }
+
+  collide(player: Player) {
+
+
+    // HELP ME NOT DO THIS PLEASE GOD
+    if (this.octreeNeedsUpdate) {
+      this.octree = new Octree();
+      this.octree.fromGraphNode(this.mesh);
+      this.octreeNeedsUpdate = false;
+    }
+
+    return this.octree.sphereIntersect(
+      new THREE.Sphere(player.position, player.radius)
+    );
   }
 }
 

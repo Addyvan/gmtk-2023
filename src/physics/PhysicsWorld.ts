@@ -6,15 +6,19 @@ import {
   collisionDetection,
   collisionResponse,
   closestPointOnBox,
+  collisionDetectionGeneral,
 } from "./core";
 import state from "../state";
 
+const raycaster = new THREE.Raycaster();
 class PhysicsWorld {
   maxParticles: number;
   particles: Particles;
 
   player: Player;
   colliders: Array<Collider>;
+
+  colliderGroup: THREE.Group;
 
   constructor(
     playerMesh: THREE.Mesh<THREE.SphereGeometry>,
@@ -37,9 +41,15 @@ class PhysicsWorld {
 
     this.player = new Player(this.particles, playerMesh);
     state.cameraController.setPlayer(this.player);
+
+    this.colliderGroup = new THREE.Group();
+
     this.colliders = colliderMeshArr.map((colliderMesh) => {
+      this.colliderGroup.add(colliderMesh);
       return new Collider(colliderMesh);
     });
+
+    state.scene.add(this.colliderGroup);
   }
 
   update(dt: number) {
@@ -54,10 +64,8 @@ class PhysicsWorld {
     for (let collider of this.colliders) {
       if (!this.player.isFlying && !collider.isActive()) continue;
 
-      const { collided, normal, penetration } = collisionDetection(
-        this.player,
-        collider
-      );
+      let { collided, normal, penetration } = collider.collide(this.player);
+
       if (!collided) {
         this.player.framesSinceLastCollision += 1;
       }
@@ -80,7 +88,7 @@ class PhysicsWorld {
           state.setActiveCollider(collider);
         }
       } else {
-        if (this.player.framesSinceLastCollision > 10) {
+        if (this.player.framesSinceLastCollision > 5) {
           this.player.isFlying = true;
           this.player.timeSinceLastPop = 0;
         }
@@ -117,7 +125,7 @@ class PhysicsWorld {
         }
 
         let dBetaRad = state.deltaBetaRad;
-        let dGammaRad = state.deltaGammaRad;
+        // let dGammaRad = state.deltaGammaRad;
         const popSensitivity = 0.05;
 
         if (

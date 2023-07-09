@@ -34,7 +34,6 @@ class AppState {
   constructor() {
     // THREE.js init
     this.scene = new THREE.Scene();
-    this.scene.background = new THREE.Color(0x87ceeb);
     this.camera = new THREE.PerspectiveCamera(
       75,
       window.innerWidth / window.innerHeight,
@@ -92,6 +91,27 @@ class AppState {
     const dirLight = new THREE.DirectionalLight(0xffffff, 1);
     dirLight.position.set(50, 20, 0);
     this.scene.add(dirLight);
+
+    const canvas = document.createElement("canvas");
+    canvas.width = 1;
+    canvas.height = 32;
+
+    const context: any = canvas.getContext("2d");
+    const gradient = context.createLinearGradient(0, 0, 0, 32);
+    gradient.addColorStop(0.0, "#014a84");
+    gradient.addColorStop(0.5, "#0561a0");
+    gradient.addColorStop(1.0, "#437ab6");
+    context.fillStyle = gradient;
+    context.fillRect(0, 0, 1, 32);
+
+    const sky = new THREE.Mesh(
+      new THREE.SphereGeometry(80),
+      new THREE.MeshBasicMaterial({
+        map: new THREE.CanvasTexture(canvas),
+        side: THREE.BackSide,
+      })
+    );
+    this.scene.add(sky);
 
     this.scene.add(level.playerMesh);
     for (let colliderMesh of level.colliderMeshes) {
