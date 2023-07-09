@@ -5,7 +5,7 @@ import Collider from "./physics/Collider";
 
 // TODO: Maybe the offset should be conditional based off the current active collider?
 
-const onPlatformOffset = new THREE.Vector3(0, 3, 2);
+const onPlatformOffset = new THREE.Vector3(0, 2, 3);
 
 const offPlatformOffset = new THREE.Vector3(0, 1, 1.2);
 

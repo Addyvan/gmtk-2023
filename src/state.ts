@@ -7,6 +7,7 @@ import Collider from "./physics/Collider";
 import { EffectComposer } from "three-stdlib";
 import { RenderPixelatedPass } from "three/examples/jsm/postprocessing/RenderPixelatedPass.js";
 import { OutputPass } from "three/examples/jsm/postprocessing/OutputPass.js";
+import loadLevel from "./utils/loadLevel";
 
 class AppState {
   renderer: THREE.WebGLRenderer;
@@ -15,6 +16,7 @@ class AppState {
 
   ballMesh: THREE.Mesh<THREE.SphereGeometry>;
   physics: PhysicsWorld;
+  flag: THREE.Object3D;
 
   clock: THREE.Clock;
   physicsClock: THREE.Clock;
@@ -76,8 +78,8 @@ class AppState {
       this.scene,
       this.camera
     );
-    renderPixelatedPass.normalEdgeStrength = 0.8;
-    renderPixelatedPass.depthEdgeStrength = 0.6;
+    renderPixelatedPass.normalEdgeStrength = 1;
+    renderPixelatedPass.depthEdgeStrength = 1;
     this.composer.addPass(renderPixelatedPass);
 
     const outputPass = new OutputPass();
@@ -85,12 +87,15 @@ class AppState {
   }
 
   setLevel(level: Level) {
+    console.log("LEVEL", level);
     // clear the scene
     this.scene.remove.apply(this.scene, this.scene.children);
     this.scene.add(new THREE.AmbientLight(0xffffff, 0.5));
     const dirLight = new THREE.DirectionalLight(0xffffff, 1);
     dirLight.position.set(50, 20, 0);
     this.scene.add(dirLight);
+    this.scene.add(level.flag);
+    this.flag = level.flag;
 
     const canvas = document.createElement("canvas");
     canvas.width = 1;
@@ -121,6 +126,12 @@ class AppState {
     this.physics = new PhysicsWorld(level.playerMesh, level.colliderMeshes);
     this.holeClock.stop();
     this.holeClock.start();
+  }
+
+  nextLevel() {
+    loadLevel("test").then((level: Level) => {
+      this.setLevel(level);
+    });
   }
 
   handlePhoneMove(evt: CustomEvent<any>) {

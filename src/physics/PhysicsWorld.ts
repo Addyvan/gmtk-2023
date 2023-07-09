@@ -56,8 +56,15 @@ class PhysicsWorld {
     // hacky might need to change?
     this.particles._addForce(0, 0, -10, 0);
 
-    if (this.player.position.y < -50) {
+    // TODO: set this value to bottom of map (whereever that is)
+    if (this.player.position.y < -10) {
       this.player.reset();
+      return;
+    }
+
+    // YOU WHERE LOADING NEXT LEVEL
+    if (this.player.position.distanceToSquared(state.flag.position) < 0.5) {
+      state.nextLevel();
       return;
     }
 

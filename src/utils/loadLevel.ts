@@ -5,7 +5,7 @@ export type Level = {
   name: string;
   playerMesh: THREE.Mesh<THREE.SphereGeometry>;
   colliderMeshes: Array<THREE.Mesh<THREE.BoxGeometry>>;
-  map: THREE.Group;
+  flag: THREE.Group;
 };
 
 const loader = new GLTFLoader();
@@ -13,9 +13,10 @@ const loader = new GLTFLoader();
 function loadLevel(name: string): Promise<Level> {
   return new Promise((resolve, reject) => {
     const onLoad = (gltf: GLTF) => {
+      console.log("GLTF", gltf);
       let player: THREE.Mesh<THREE.SphereGeometry>;
       let colliders: Array<THREE.Mesh<THREE.BoxGeometry>> = [];
-      let map = new THREE.Group();
+      let flag: THREE.Group;
       gltf.scene.traverse((obj: any) => {
         console.log(obj);
 
@@ -36,14 +37,17 @@ function loadLevel(name: string): Promise<Level> {
           return;
         }
 
-        map.add(obj);
+        if (obj.name === "flag") {
+          flag = obj;
+          return;
+        }
       });
 
       resolve({
         name: name,
         playerMesh: player,
         colliderMeshes: colliders,
-        map: map,
+        flag,
       });
     };
     const onProgress = (evt: ProgressEvent<EventTarget>) => {
