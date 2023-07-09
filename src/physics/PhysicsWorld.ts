@@ -68,6 +68,7 @@ class PhysicsWorld {
         new THREE.Sphere(this.player.position, this.player.radius)
       )
     ) {
+      state.finishSound.play();
       state.nextLevel();
       return;
     }
