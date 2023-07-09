@@ -1,2 +1,2 @@
-const levels = ["level2", "level1"];
+const levels = ["level1", "level2"];
 export default levels;

@@ -34,7 +34,7 @@ class AppState {
 
   composer: EffectComposer;
 
-  holeClock: THREE.Clock = new THREE.Clock();
+  holeClock: THREE.Clock;
 
   constructor() {
     // THREE.js init
@@ -94,8 +94,8 @@ class AppState {
 
     for (let l of levels) {
       this.levels.push(await loadLevel(l));
-      
     }
+    this.holeClock = new THREE.Clock();
   }
 
   setLevel(level: Level) {
@@ -136,11 +136,16 @@ class AppState {
     }
 
     this.physics = new PhysicsWorld(level.playerMesh, level.colliderMeshes);
-    this.holeClock.stop();
-    this.holeClock.start();
   }
 
   nextLevel() {
+    if (this.levelIndex > this.levels.length - 1) {
+      this.levelIndex = 0;
+      alert(`Course finished in ${this.holeClock.getElapsedTime()}!`);
+      this.holeClock.stop();
+      this.holeClock.start();
+    }
+
     this.setLevel(this.levels[this.levelIndex]);
     this.levelIndex += 1;
   }
