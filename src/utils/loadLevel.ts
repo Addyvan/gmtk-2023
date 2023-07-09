@@ -5,6 +5,7 @@ export type Level = {
   name: string;
   playerMesh: THREE.Mesh<THREE.SphereGeometry>;
   colliderMeshes: Array<THREE.Mesh<THREE.BoxGeometry>>;
+  map: THREE.Group;
 };
 
 const loader = new GLTFLoader();
@@ -14,8 +15,10 @@ function loadLevel(name: string): Promise<Level> {
     const onLoad = (gltf: GLTF) => {
       let player: THREE.Mesh<THREE.SphereGeometry>;
       let colliders: Array<THREE.Mesh<THREE.BoxGeometry>> = [];
-
+      let map = new THREE.Group();
       gltf.scene.traverse((obj: any) => {
+        console.log(obj);
+
         if (obj.userData.ball) {
           if (player !== undefined) {
             reject("Can only have one ball on a level!");
@@ -25,18 +28,22 @@ function loadLevel(name: string): Promise<Level> {
             new THREE.MeshStandardMaterial({ color: 0xffffff })
           );
           player.position.set(obj.position.x, obj.position.y, obj.position.z);
+          return;
         }
 
         if (obj.userData.collider === true) {
-          console.log(obj.userData);
           colliders.push(obj);
+          return;
         }
+
+        map.add(obj);
       });
 
       resolve({
         name: name,
         playerMesh: player,
         colliderMeshes: colliders,
+        map: map,
       });
     };
     const onProgress = (evt: ProgressEvent<EventTarget>) => {

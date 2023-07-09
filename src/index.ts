@@ -34,7 +34,7 @@ async function start() {
     }
     await sleep(100);
   }
-  loadLevel("test").then((level: Level) => {
+  loadLevel("level1").then((level: Level) => {
     state.setLevel(level);
 
     function start() {
