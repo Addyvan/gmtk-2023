@@ -3,6 +3,7 @@ import "./index.css";
 import levels from "./levels";
 import state from "./state";
 import DeviceOrientationHandler from "./utils/DeviceOrientationHandler";
+import { loadAudio } from "./audio";
 import { update } from "./update";
 
 const deviceOrientationHandler = new DeviceOrientationHandler();
@@ -19,9 +20,11 @@ async function start() {
     await sleep(100);
   }
 
+
   await state.setLevels(levels);
   await state.nextLevel();
   state.clock.getDelta();
+  loadAudio(state.camera);
   update();
 }
 start();
