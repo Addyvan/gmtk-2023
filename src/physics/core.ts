@@ -118,13 +118,14 @@ export function collisionDetectionGeneral(player: Player, collider: Collider) {
     normal,
   };
 }
-
+let norm: number;
 export function collisionResponse(
   particles: Particles,
   pIndex: number,
   normal: THREE.Vector3,
   penetration: number,
-  Cr = 0.5
+  Cr = 0.5,
+  // isBouncePad: boolean
 ) {
   particles._addPosition(
     pIndex,
@@ -132,7 +133,7 @@ export function collisionResponse(
     penetration * normal.y,
     penetration * normal.z
   );
-  let norm = Math.abs((1 + Cr) * particles._getVelocity(pIndex).dot(normal));
+  norm = Math.abs((1 + Cr) * particles._getVelocity(pIndex).dot(normal));
   particles._addVelocity(
     pIndex,
     norm * normal.x,

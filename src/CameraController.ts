@@ -1,7 +1,6 @@
 import * as THREE from "three";
 import Player from "./physics/Player";
 import state from "./state";
-import Collider from "./physics/Collider";
 
 // TODO: Maybe the offset should be conditional based off the current active collider?
 
@@ -42,7 +41,7 @@ class CameraController {
     if (state.activeCollider !== null) {
       onMoveable = state.activeCollider.mesh.userData.controllable;
     }
-
+    
     if (this.player.isFlying || !onMoveable) {
       this.desiredPosition.set(
         this.player.position.x + offPlatformOffset.x,

@@ -112,7 +112,12 @@ class PhysicsWorld {
       if (collided) {
         this.player.framesSinceLastCollision = 0;
         if (this.player.timeSinceLastPop > 0.2) {
+          // console.log(collider.mesh.userData.bouncepad);
           collisionResponse(this.particles, 0, normal, penetration, 0.0);
+        }
+
+        if (collider.mesh.userData.bouncepad) {
+          this.player.pop();
         }
 
         let frictionCoeff = 0.1;
