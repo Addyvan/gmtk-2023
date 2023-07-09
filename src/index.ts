@@ -4,6 +4,7 @@ import levels from "./levels";
 import { update, fixedUpdate } from "./update";
 import state from "./state";
 import DeviceOrientationHandler from "./utils/DeviceOrientationHandler";
+import { loadAudio } from "./audio";
 
 // The wake lock sentinel.
 let wakeLock = null;
@@ -35,6 +36,7 @@ async function start() {
     await sleep(100);
   }
 
+
   await state.setLevels(levels);
   await state.nextLevel();
   function start() {
@@ -46,6 +48,7 @@ async function start() {
 
   state.clock.getDelta();
   state.physicsClock.getDelta();
+  loadAudio(state.camera);
   start();
   
 }
