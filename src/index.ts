@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import "./index.css";
-import loadLevel, { Level } from "./utils/loadLevel";
+import levels from "./levels";
 import { update, fixedUpdate } from "./update";
 import state from "./state";
 import DeviceOrientationHandler from "./utils/DeviceOrientationHandler";
@@ -34,19 +34,19 @@ async function start() {
     }
     await sleep(100);
   }
-  loadLevel("level1").then((level: Level) => {
-    state.setLevel(level);
 
-    function start() {
-      setInterval(() => {
-        fixedUpdate();
-      }, 1000 / 40);
-      update();
-    }
+  await state.setLevels(levels);
+  await state.nextLevel();
+  function start() {
+    setInterval(() => {
+      fixedUpdate();
+    }, 1000 / 40);
+    update();
+  }
 
-    state.clock.getDelta();
-    state.physicsClock.getDelta();
-    start();
-  });
+  state.clock.getDelta();
+  state.physicsClock.getDelta();
+  start();
+  
 }
 start();

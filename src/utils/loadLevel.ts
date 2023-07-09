@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import { GLTFLoader, GLTF } from "three-stdlib";
+import { Octree } from "three-stdlib";
 
 export type Level = {
   name: string;
@@ -39,6 +40,8 @@ function loadLevel(name: string): Promise<Level> {
 
         if (obj.name === "flag") {
           flag = obj;
+          flag.userData.octree = new Octree();
+          flag.userData.octree.fromGraphNode(flag);
           return;
         }
       });

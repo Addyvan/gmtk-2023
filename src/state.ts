@@ -29,6 +29,9 @@ class AppState {
   deltaBetaRad: number = 0;
   deltaGammaRad: number = 0;
 
+  levels: Array<Level>;
+  levelIndex: number = 0;
+
   composer: EffectComposer;
 
   holeClock: THREE.Clock = new THREE.Clock();
@@ -86,6 +89,15 @@ class AppState {
     this.composer.addPass(outputPass);
   }
 
+  async setLevels(levels) {
+    this.levels = [];
+
+    for (let l of levels) {
+      this.levels.push(await loadLevel(l));
+      
+    }
+  }
+
   setLevel(level: Level) {
     console.log("LEVEL", level);
     // clear the scene
@@ -129,9 +141,8 @@ class AppState {
   }
 
   nextLevel() {
-    loadLevel("test").then((level: Level) => {
-      this.setLevel(level);
-    });
+    this.setLevel(this.levels[this.levelIndex]);
+    this.levelIndex += 1;
   }
 
   handlePhoneMove(evt: CustomEvent<any>) {

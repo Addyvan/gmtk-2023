@@ -63,7 +63,11 @@ class PhysicsWorld {
     }
 
     // YOU WHERE LOADING NEXT LEVEL
-    if (this.player.position.distanceToSquared(state.flag.position) < 0.5) {
+    if (
+      state.flag.userData.octree.sphereIntersect(
+        new THREE.Sphere(this.player.position, this.player.radius)
+      )
+    ) {
       state.nextLevel();
       return;
     }
