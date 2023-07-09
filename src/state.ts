@@ -36,6 +36,8 @@ class AppState {
 
   holeClock: THREE.Clock;
 
+  finishSound: THREE.Audio;
+
   constructor() {
     // THREE.js init
     this.scene = new THREE.Scene();
