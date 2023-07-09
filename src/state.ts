@@ -8,8 +8,12 @@ import { EffectComposer } from "three-stdlib";
 import { RenderPixelatedPass } from "three/examples/jsm/postprocessing/RenderPixelatedPass.js";
 import { OutputPass } from "three/examples/jsm/postprocessing/OutputPass.js";
 import loadLevel from "./utils/loadLevel";
+import levels from "./levels";
 
 class AppState {
+
+  levelSwitching: boolean = true;
+
   renderer: THREE.WebGLRenderer;
   camera: THREE.PerspectiveCamera;
   scene: THREE.Scene;
@@ -89,15 +93,6 @@ class AppState {
     this.composer.addPass(outputPass);
   }
 
-  async setLevels(levels) {
-    this.levels = [];
-
-    for (let l of levels) {
-      this.levels.push(await loadLevel(l));
-    }
-    this.holeClock = new THREE.Clock();
-  }
-
   setLevel(level: Level) {
     // clear the scene
     this.scene.remove.apply(this.scene, this.scene.children);
@@ -138,13 +133,17 @@ class AppState {
   }
 
   nextLevel() {
-    if (this.levelIndex > this.levels.length - 1) {
+    this.levelSwitching = true;
+    if (this.levelIndex > levels.length - 1) {
       this.levelIndex = 0;
       alert("Thanks for playing, please leave a review!");
     }
 
-    this.setLevel(this.levels[this.levelIndex]);
-    this.levelIndex += 1;
+    loadLevel(levels[this.levelIndex]).then((level) => {
+      this.setLevel(level);
+      this.levelIndex += 1;
+      this.levelSwitching = false;
+    });
   }
 
   handlePhoneMove(evt: CustomEvent<any>) {

@@ -1,4 +1,3 @@
-import * as THREE from "three";
 import state from "./state";
 let dt: number = state.clock.getDelta();
 
@@ -7,6 +6,10 @@ let dt: number = state.clock.getDelta();
  */
 function update() {
   requestAnimationFrame(update);
+
+  if (state.levelSwitching) {
+    return;
+  }
 
   // monitored code goes here
   dt = state.clock.getDelta();
@@ -26,19 +29,4 @@ function update() {
   state.render();
 }
 
-let physicsDt = state.physicsClock.getDelta();
-/**
- * The physic update loop
- */
-function fixedUpdate() {
-  physicsDt = state.physicsClock.getDelta();
-  // state.physics.update(physicsDt);
-
-  // for (let collider of state.physics.colliders) {
-  //   if (collider.needsUpdate) {
-  //     collider.update(physicsDt);
-  //   }
-  // }
-}
-
-export { update, fixedUpdate };
+export { update };

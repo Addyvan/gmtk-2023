@@ -6,7 +6,7 @@ import state from "./state";
 
 const onPlatformOffset = new THREE.Vector3(0, 2, 3);
 
-const offPlatformOffset = new THREE.Vector3(0, 1, 1.2);
+const offPlatformOffset = new THREE.Vector3(0, 0.9, 1.1);
 
 class CameraController {
   camera: THREE.PerspectiveCamera;
@@ -41,7 +41,7 @@ class CameraController {
     if (state.activeCollider !== null) {
       onMoveable = state.activeCollider.mesh.userData.controllable;
     }
-    
+
     if (this.player.isFlying || !onMoveable) {
       this.desiredPosition.set(
         this.player.position.x + offPlatformOffset.x,

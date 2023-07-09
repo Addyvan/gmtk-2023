@@ -102,7 +102,7 @@ class PhysicsWorld {
           state.setActiveCollider(collider);
         }
       } else {
-        if (this.player.framesSinceLastCollision > 5) {
+        if (this.player.framesSinceLastCollision > 10) {
           this.player.isFlying = true;
           this.player.timeSinceLastPop = 0;
         }
@@ -150,7 +150,7 @@ class PhysicsWorld {
         if (
           dBetaRad < -popSensitivity &&
           this.player.position.z - collider.mesh.position.z <
-            -collider.depth / 4
+            -collider.depth / 5
         ) {
           this.player.pop();
         }

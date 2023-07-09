@@ -1,2 +1,11 @@
-const levels = ["level7"];
+const levels = [
+  "level1",
+  "level2",
+  "level3",
+  "level4",
+  "level5",
+  "level6",
+  "level7",
+  "level8",
+];
 export default levels;
