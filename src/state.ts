@@ -11,7 +11,6 @@ import loadLevel from "./utils/loadLevel";
 import levels from "./levels";
 
 class AppState {
-
   levelSwitching: boolean = true;
 
   renderer: THREE.WebGLRenderer;
@@ -152,11 +151,13 @@ class AppState {
     const { _, betaRad, gammaRad } = evt.detail;
 
     // if we are currently balancing on a collider then move it
-    if (this.activeCollider !== null) {
-      this.activeCollider.setRotationFromDeviceOrientation(betaRad, gammaRad);
+    for (let collider of this.physics.colliders) {
+      if (collider.mesh.userData.controllable) {
+        collider.setRotationFromDeviceOrientation(betaRad, gammaRad);
 
-      this.deltaBetaRad = this.prevBetaRad - betaRad;
-      this.deltaGammaRad = -(this.prevGammaRad - gammaRad);
+        this.deltaBetaRad = this.prevBetaRad - betaRad;
+        this.deltaGammaRad = -(this.prevGammaRad - gammaRad);
+      }
     }
 
     this.prevBetaRad = betaRad;
