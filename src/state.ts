@@ -99,7 +99,6 @@ class AppState {
   }
 
   setLevel(level: Level) {
-    console.log("LEVEL", level);
     // clear the scene
     this.scene.remove.apply(this.scene, this.scene.children);
     this.scene.add(new THREE.AmbientLight(0xffffff, 0.5));
@@ -141,9 +140,7 @@ class AppState {
   nextLevel() {
     if (this.levelIndex > this.levels.length - 1) {
       this.levelIndex = 0;
-      alert(`Course finished in ${this.holeClock.getElapsedTime()}!`);
-      this.holeClock.stop();
-      this.holeClock.start();
+      alert("Thanks for playing, please leave a review!");
     }
 
     this.setLevel(this.levels[this.levelIndex]);

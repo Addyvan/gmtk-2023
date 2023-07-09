@@ -14,13 +14,12 @@ const loader = new GLTFLoader();
 function loadLevel(name: string): Promise<Level> {
   return new Promise((resolve, reject) => {
     const onLoad = (gltf: GLTF) => {
-      console.log("GLTF", gltf);
+
       let player: THREE.Mesh<THREE.SphereGeometry>;
       let colliders: Array<THREE.Mesh<THREE.BoxGeometry>> = [];
       let flag: THREE.Group;
       gltf.scene.traverse((obj: any) => {
         console.log(obj);
-
         if (obj.userData.ball) {
           if (player !== undefined) {
             reject("Can only have one ball on a level!");
@@ -60,7 +59,7 @@ function loadLevel(name: string): Promise<Level> {
       console.error("Error loading level:", evt);
       reject(evt);
     };
-    loader.load(`/assets/${name}.glb`, onLoad, onProgress, onError);
+    loader.load(`./assets/${name}.glb`, onLoad, onProgress, onError);
   });
 }
 

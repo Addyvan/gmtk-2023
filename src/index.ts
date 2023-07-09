@@ -1,23 +1,9 @@
 import * as THREE from "three";
 import "./index.css";
 import levels from "./levels";
-import { update, fixedUpdate } from "./update";
 import state from "./state";
 import DeviceOrientationHandler from "./utils/DeviceOrientationHandler";
-
-// The wake lock sentinel.
-let wakeLock = null;
-
-// Function that attempts to request a screen wake lock.
-const requestWakeLock = async () => {
-  try {
-    //@ts-ignore
-    wakeLock = await navigator.wakeLock.request();
-  } catch (err) {
-    alert(err);
-    console.error(`${err.name}, ${err.message}`);
-  }
-};
+import { update } from "./update";
 
 const deviceOrientationHandler = new DeviceOrientationHandler();
 
@@ -26,8 +12,6 @@ function sleep(ms) {
 }
 
 async function start() {
-  // Request a screen wake lock…
-  await requestWakeLock();
   while (true) {
     if (deviceOrientationHandler.calibrated) {
       break;
@@ -37,16 +21,7 @@ async function start() {
 
   await state.setLevels(levels);
   await state.nextLevel();
-  function start() {
-    setInterval(() => {
-      fixedUpdate();
-    }, 1000 / 40);
-    update();
-  }
-
   state.clock.getDelta();
-  state.physicsClock.getDelta();
-  start();
-  
+  update();
 }
 start();
