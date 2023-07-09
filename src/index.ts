@@ -10,23 +10,8 @@ function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-const requestWakeLock = async () => {
-  try {
-    //@ts-ignore
-    wakeLock = await navigator.wakeLock.request();
-  } catch (err) {
-    alert(err);
-    console.error(`${err.name}, ${err.message}`);
-  }
-};
 
 async function start() {
-
-  try {
-    await requestWakeLock();
-  } catch {
-
-  }
 
   while (true) {
     if (deviceOrientationHandler.calibrated) {

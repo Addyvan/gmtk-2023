@@ -22,6 +22,11 @@ body {
   }
 }
 
+#device-title-text {
+  font-size: 100px;
+  text-align: center;
+}
+
 #device-calibrate-text {
   width: 100%;
   font-size: 32px;

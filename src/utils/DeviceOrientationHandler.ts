@@ -12,23 +12,7 @@ class DeviceOrientationHandler {
     const button = document.getElementById("device-calibrate-button");
     const container = document.getElementById("device-calibrate-container");
 
-    function requestOrientationPermission() {
-      try {
-        //@ts-ignore
-        DeviceOrientationEvent.requestPermission()
-          .then((response) => {
-            if (response == "granted") {
-              window.addEventListener("deviceorientation", (e) => {
-                // do something with e
-              });
-            }
-          })
-          .catch(console.error);
-      } catch {}
-    }
-
     button.onclick = () => {
-      requestOrientationPermission();
       container.style.display = "none";
       this.calibrated = true;
     };
@@ -59,9 +43,23 @@ class DeviceOrientationHandler {
 
   initDeviceOrientationListener() {
     if (checkSupportFor("Device Orientation", "ondeviceorientation")) {
-      window.addEventListener("deviceorientation", (evt) =>
-        this.handleDeviceOrientation(evt)
-      );
+      try {
+        DeviceOrientationEvent.requestPermission()
+          .then((response) => {
+            if (response == "granted") {
+              window.addEventListener("deviceorientation", (evt) =>
+                this.handleDeviceOrientation(evt)
+              );
+            }
+          })
+          .catch(console.error);
+      } catch (err) {
+        window.addEventListener("deviceorientation", (evt) =>
+          this.handleDeviceOrientation(evt)
+        );
+      }
+      
+      
     } else {
       alert("device not supported");
     }
