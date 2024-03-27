@@ -1,5 +1,3 @@
-NOTE: Keys are locally produced for https to work better on `localhost`, nothing to worry about security wise. 
-
 # gmtk-2023 - TuppTupp
 
 THREE.js mobile game developed as part of GMTK 2023. Play the game on itch.io: [https://itch.io/jam/gmtk-2023](https://addyvan.itch.io/tupp-tupp)
